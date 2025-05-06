@@ -11,7 +11,6 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import Optional
 
 from .equality_operator import EqualityOperator
 from .greater_than_operator import GreaterThanOperator
@@ -24,7 +23,7 @@ from .set_membership_operator import SetMembershipOperator
 
 
 class Operator:
-    OPERATOR_MAP = {
+    OPERATOR_MAP = {  # noqa: RUF012
         EqualityOperator.SYMBOL: EqualityOperator,
         GreaterThanOperator.SYMBOL: GreaterThanOperator,
         GreaterThanOrEqualToOperator.SYMBOL: GreaterThanOrEqualToOperator,
@@ -39,8 +38,9 @@ class Operator:
         pass
 
     @classmethod
-    def factory(cls, operator_symbol: Optional[str]):
+    def factory(cls, operator_symbol: str | None):  # noqa: ANN206
         try:
-            return cls.OPERATOR_MAP[operator_symbol]()  # type: ignore
+            return cls.OPERATOR_MAP[operator_symbol]()  # type: ignore  # noqa: PGH003
         except KeyError:
-            raise cls.InvalidSymbolError("Operator not supported: %s" % operator_symbol)
+            msg = f"Operator not supported: {operator_symbol}"
+            raise cls.InvalidSymbolError(msg)  # noqa: B904

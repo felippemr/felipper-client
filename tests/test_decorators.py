@@ -6,7 +6,7 @@ from flipper import FeatureFlagClient, MemoryFeatureFlagStore, decorators
 
 
 class BaseTest(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.store = MemoryFeatureFlagStore()
         self.client = FeatureFlagClient(self.store)
         self.feature_name = self.txt()
@@ -17,7 +17,7 @@ class BaseTest(unittest.TestCase):
 
 
 class TestIsEnabled(BaseTest):
-    def test_calls_method_when_is_enabled_is_true(self):
+    def test_calls_method_when_is_enabled_is_true(self) -> None:
         _mock = MagicMock()
 
         @decorators.is_enabled(self.client, self.feature_name)
@@ -32,7 +32,7 @@ class TestIsEnabled(BaseTest):
 
         _mock.assert_called_once_with(*args)
 
-    def test_method_not_called_when_is_enabled_is_false(self):
+    def test_method_not_called_when_is_enabled_is_false(self) -> None:
         _mock = MagicMock()
 
         @decorators.is_enabled(self.client, self.feature_name)
@@ -45,11 +45,11 @@ class TestIsEnabled(BaseTest):
 
         _mock.assert_not_called()
 
-    def test_redirects_when_feature_disabled_and_redirect_supplied(self):
+    def test_redirects_when_feature_disabled_and_redirect_supplied(self) -> None:
         redirect_to = MagicMock()
 
         @decorators.is_enabled(self.client, self.feature_name, redirect=redirect_to)
-        def method(*args, **kwargs):
+        def method(*args, **kwargs) -> None:
             return
 
         self.flag.disable()
@@ -60,11 +60,11 @@ class TestIsEnabled(BaseTest):
 
         redirect_to.assert_called_once_with(*args)
 
-    def test_does_not_redirect_when_feature_enabled(self):  # noqa: E501
+    def test_does_not_redirect_when_feature_enabled(self) -> None:
         redirect_to = MagicMock()
 
         @decorators.is_enabled(self.client, self.feature_name, redirect=redirect_to)
-        def method(*args, **kwargs):
+        def method(*args, **kwargs) -> None:
             return
 
         self.flag.enable()

@@ -11,7 +11,7 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import Iterator, Optional
+from collections.abc import Iterator
 
 from redis import Redis
 
@@ -38,10 +38,10 @@ class RedisFeatureFlagStore(AbstractFeatureFlagStore):
         self,
         feature_name: str,
         is_enabled: bool = False,
-        client_data: Optional[dict] = None,
+        client_data: dict | None = None,
     ) -> FeatureFlagStoreItem:
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta(now(), client_data)
+            feature_name, is_enabled, FeatureFlagStoreMeta(now(), client_data),
         )
         return self._save(item)
 
@@ -49,16 +49,16 @@ class RedisFeatureFlagStore(AbstractFeatureFlagStore):
         self._redis.set(self._key_name(item.feature_name), item.serialize())
         return item
 
-    def get(self, feature_name: str) -> Optional[FeatureFlagStoreItem]:
+    def get(self, feature_name: str) -> FeatureFlagStoreItem | None:
         serialized = self._redis.get(self._key_name(feature_name))
         if not serialized:
             return None
         return FeatureFlagStoreItem.deserialize(serialized)
 
     def _key_name(self, feature_name: str) -> str:
-        return "/".join([self.base_key, feature_name])
+        return f"{self.base_key}/{feature_name}"
 
-    def set(self, feature_name: str, is_enabled: bool):
+    def set(self, feature_name: str, is_enabled: bool) -> None:
         existing = self.get(feature_name)
 
         if existing is None:
@@ -66,13 +66,13 @@ class RedisFeatureFlagStore(AbstractFeatureFlagStore):
             return
 
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta.from_dict(existing.meta)
+            feature_name, is_enabled, FeatureFlagStoreMeta.from_dict(existing.meta),
         )
 
         self._save(item)
 
     def list(
-        self, limit: Optional[int] = None, offset: int = 0
+        self, limit: int | None = None, offset: int = 0,
     ) -> Iterator[FeatureFlagStoreItem]:
         all_feature_keys = self._enumerate_feature_keys(limit, offset)
 
@@ -83,7 +83,7 @@ class RedisFeatureFlagStore(AbstractFeatureFlagStore):
                 yield FeatureFlagStoreItem.deserialize(serialized)
 
     def _enumerate_feature_keys(
-        self, limit: Optional[int] = None, offset: int = 0
+        self, limit: int | None = None, offset: int = 0,
     ) -> Iterator[str]:
         visited = 0
 
@@ -103,19 +103,20 @@ class RedisFeatureFlagStore(AbstractFeatureFlagStore):
             yield key.decode("utf-8")
 
     def _make_scan_wildcard_match(self) -> str:
-        return "%s/*" % self.base_key
+        return f"{self.base_key}/*"
 
-    def set_meta(self, feature_name: str, meta: FeatureFlagStoreMeta):
+    def set_meta(self, feature_name: str, meta: FeatureFlagStoreMeta) -> None:
         existing = self.get(feature_name)
 
         if existing is None:
+            msg = f"Feature {feature_name} does not exist"
             raise FlagDoesNotExistError(
-                "Feature %s does not exist" % feature_name
-            )  # noqa: E501
+                msg,
+            )
 
         item = FeatureFlagStoreItem(feature_name, existing.raw_is_enabled, meta)
 
         self._save(item)
 
-    def delete(self, feature_name: str):
+    def delete(self, feature_name: str) -> None:
         self._redis.delete(self._key_name(feature_name))

@@ -4,32 +4,32 @@ from flipper.bucketing import Percentage
 
 
 class TestGetType(unittest.TestCase):
-    def test_is_correct_value(self):
+    def test_is_correct_value(self) -> None:
         percentage = Percentage()
-        self.assertEqual("Percentage", percentage.get_type())
+        assert percentage.get_type() == "Percentage"
 
 
 class TestValue(unittest.TestCase):
-    def test_matches_value_provided_in_constructor(self):
+    def test_matches_value_provided_in_constructor(self) -> None:
         value = 0.8
         percentage = Percentage(value=value)
-        self.assertEqual(value, percentage.value)
+        assert value == percentage.value
 
-    def test_defaults_to_1_dot_0(self):
+    def test_defaults_to_1_dot_0(self) -> None:
         percentage = Percentage()
-        self.assertEqual(1.0, percentage.value)
+        assert percentage.value == 1.0
 
 
 class TestToDict(unittest.TestCase):
-    def test_returns_correct_values(self):
+    def test_returns_correct_values(self) -> None:
         value = 0.8
         percentage = Percentage(value=value)
         expected = {"value": value, "type": Percentage.get_type()}
-        self.assertEqual(expected, percentage.to_dict())
+        assert expected == percentage.to_dict()
 
 
 class TestFromDict(unittest.TestCase):
-    def test_sets_correct_data(self):
+    def test_sets_correct_data(self) -> None:
         data = {"value": 0.8, "type": Percentage.get_type()}
         percentage = Percentage.from_dict(data)
-        self.assertEqual(data, percentage.to_dict())
+        assert data == percentage.to_dict()

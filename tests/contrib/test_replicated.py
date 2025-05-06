@@ -8,7 +8,7 @@ from flipper.contrib.storage import FeatureFlagStoreMeta
 
 
 class BaseTest(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.primary = MemoryFeatureFlagStore()
         self.replicas = [
             MemoryFeatureFlagStore(),
@@ -22,7 +22,7 @@ class BaseTest(unittest.TestCase):
 
 
 class TestCreate(BaseTest):
-    def test_forwards_all_arguments_to_stores(self):
+    def test_forwards_all_arguments_to_stores(self) -> None:
         feature_name = self.txt()
 
         primary = MagicMock()
@@ -40,7 +40,7 @@ class TestCreate(BaseTest):
 
 
 class TestGet(BaseTest):
-    def test_reads_value_from_primary_store(self):
+    def test_reads_value_from_primary_store(self) -> None:
         feature_name = self.txt()
 
         self.store.create(feature_name, is_enabled=True)
@@ -50,9 +50,9 @@ class TestGet(BaseTest):
 
         result = self.store.get(feature_name).is_enabled()
 
-        self.assertTrue(result)
+        assert result
 
-    def test_forwards_all_arguments_to_primary_store_only(self):
+    def test_forwards_all_arguments_to_primary_store_only(self) -> None:
         feature_name = self.txt()
 
         primary = MagicMock()
@@ -72,25 +72,15 @@ class TestGet(BaseTest):
 
 
 class TestSet(BaseTest):
-    def test_when_asynch_is_false_sets_value_in_primary_and_replicas(self):
+    def test_when_asynch_is_false_sets_value_in_primary_and_replicas(self) -> None:
         feature_name = self.txt()
 
         self.store.create(feature_name, is_enabled=False, asynch=False)
         self.store.set(feature_name, True, asynch=False)
 
-        self.assertTrue(
-            all(
-                [
-                    self.primary.get(feature_name).is_enabled(),
-                    *[
-                        replica.get(feature_name).is_enabled()
-                        for replica in self.replicas
-                    ],
-                ]
-            )
-        )
+        assert all([self.primary.get(feature_name).is_enabled(), *[replica.get(feature_name).is_enabled() for replica in self.replicas]])  # noqa: E501
 
-    def test_forwards_all_arguments_to_stores(self):
+    def test_forwards_all_arguments_to_stores(self) -> None:
         feature_name = self.txt()
 
         primary = MagicMock()
@@ -110,22 +100,15 @@ class TestSet(BaseTest):
 
 
 class TestDelete(BaseTest):
-    def test_when_asynch_is_false_deletes_in_primary_and_replicas(self):
+    def test_when_asynch_is_false_deletes_in_primary_and_replicas(self) -> None:
         feature_name = self.txt()
 
         self.store.create(feature_name, is_enabled=False, asynch=False)
         self.store.delete(feature_name, asynch=False)
 
-        self.assertFalse(
-            any(
-                [
-                    self.primary.get(feature_name),
-                    *[replica.get(feature_name) for replica in self.replicas],
-                ]
-            )
-        )
+        assert not any([self.primary.get(feature_name), *[replica.get(feature_name) for replica in self.replicas]])
 
-    def test_forwards_all_arguments_to_stores(self):
+    def test_forwards_all_arguments_to_stores(self) -> None:
         feature_name = self.txt()
 
         primary = MagicMock()
@@ -145,7 +128,7 @@ class TestDelete(BaseTest):
 
 
 class TestList(BaseTest):
-    def test_reads_value_from_primary_store(self):
+    def test_reads_value_from_primary_store(self) -> None:
         feature_name = self.txt()
 
         self.store.create(feature_name, is_enabled=True, asynch=False)
@@ -155,9 +138,9 @@ class TestList(BaseTest):
 
         result = list(self.store.list())
 
-        self.assertEqual(1, len(result))
+        assert len(result) == 1
 
-    def test_forwards_all_arguments_to_primary_store_only(self):
+    def test_forwards_all_arguments_to_primary_store_only(self) -> None:
         feature_name = self.txt()
 
         primary = MagicMock()
@@ -177,30 +160,20 @@ class TestList(BaseTest):
 
 
 class TestSetMeta(BaseTest):
-    def test_when_asynch_is_false_sets_meta_in_primary_and_replicas(self):
+    def test_when_asynch_is_false_sets_meta_in_primary_and_replicas(self) -> None:
         feature_name = self.txt()
 
-        meta = FeatureFlagStoreMeta(datetime(2018, 5, 4))
+        meta = FeatureFlagStoreMeta(datetime(2018, 5, 4))  # noqa: DTZ001
 
         self.store.create(feature_name, asynch=False)
         self.store.set_meta(feature_name, meta, asynch=False)
 
-        self.assertTrue(
-            all(
-                [
-                    self.primary.get(feature_name).meta == meta.to_dict(),
-                    *[
-                        replica.get(feature_name).meta == meta.to_dict()
-                        for replica in self.replicas
-                    ],
-                ]
-            )
-        )
+        assert all([self.primary.get(feature_name).meta == meta.to_dict(), *[replica.get(feature_name).meta == meta.to_dict() for replica in self.replicas]])  # noqa: E501
 
-    def test_forwards_all_arguments_to_stores(self):
+    def test_forwards_all_arguments_to_stores(self) -> None:
         feature_name = self.txt()
 
-        meta = FeatureFlagStoreMeta(datetime(2018, 5, 4))
+        meta = FeatureFlagStoreMeta(datetime(2018, 5, 4))  # noqa: DTZ001
 
         primary = MagicMock()
         replicas = [MagicMock(), MagicMock(), MagicMock()]

@@ -11,7 +11,8 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import Iterator, Optional, cast
+from collections.abc import Iterator
+from typing import cast
 
 from .interface import AbstractFeatureFlagStore, FlagDoesNotExistError
 from .storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
@@ -20,7 +21,7 @@ from .util.date import now
 
 class S3FeatureFlagStore(AbstractFeatureFlagStore):
     def __init__(
-        self, client, bucket_name: str, page_size: Optional[int] = 1000
+        self, client, bucket_name: str, page_size: int | None = 1000,  # noqa: ANN001
     ) -> None:
         self._client = client
         self._bucket_name = bucket_name
@@ -30,30 +31,30 @@ class S3FeatureFlagStore(AbstractFeatureFlagStore):
         self,
         feature_name: str,
         is_enabled: bool = False,
-        client_data: Optional[dict] = None,
+        client_data: dict | None = None,
     ) -> FeatureFlagStoreItem:
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta(now(), client_data)
+            feature_name, is_enabled, FeatureFlagStoreMeta(now(), client_data),
         )
         return self._save(item)
 
-    def _save(self, item: FeatureFlagStoreItem):
+    def _save(self, item: FeatureFlagStoreItem):  # noqa: ANN202
         self._client.put_object(
-            Bucket=self._bucket_name, Key=item.feature_name, Body=item.serialize()
+            Bucket=self._bucket_name, Key=item.feature_name, Body=item.serialize(),
         )
         return item
 
-    def get(self, feature_name: str) -> Optional[FeatureFlagStoreItem]:
+    def get(self, feature_name: str) -> FeatureFlagStoreItem | None:
         try:
             response = self._client.get_object(
-                Bucket=self._bucket_name, Key=feature_name
+                Bucket=self._bucket_name, Key=feature_name,
             )
         except self._client.exceptions.NoSuchKey:
             return None
         serialized = response["Body"].read()
         return FeatureFlagStoreItem.deserialize(serialized)
 
-    def set(self, feature_name: str, is_enabled: bool):
+    def set(self, feature_name: str, is_enabled: bool) -> None:
         existing = self.get(feature_name)
 
         if existing is None:
@@ -61,13 +62,13 @@ class S3FeatureFlagStore(AbstractFeatureFlagStore):
             return
 
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta.from_dict(existing.meta)
+            feature_name, is_enabled, FeatureFlagStoreMeta.from_dict(existing.meta),
         )
 
         self._save(item)
 
     def list(
-        self, limit: Optional[int] = None, offset: int = 0
+        self, limit: int | None = None, offset: int = 0,
     ) -> Iterator[FeatureFlagStoreItem]:
         visited = 0
 
@@ -79,7 +80,7 @@ class S3FeatureFlagStore(AbstractFeatureFlagStore):
             if self._has_reached_end_of_list(limit, offset, visited):
                 return
 
-            yield cast(FeatureFlagStoreItem, self.get(key))
+            yield cast("FeatureFlagStoreItem", self.get(key))
 
     def _list_object_keys(self) -> Iterator[str]:
         paginator = self._client.get_paginator("list_objects_v2")
@@ -92,7 +93,7 @@ class S3FeatureFlagStore(AbstractFeatureFlagStore):
         return visited <= offset
 
     def _has_reached_end_of_list(
-        self, limit: Optional[int], offset: int, visited: int
+        self, limit: int | None, offset: int, visited: int,
     ) -> bool:
         return limit is not None and visited > limit + offset
 
@@ -100,7 +101,8 @@ class S3FeatureFlagStore(AbstractFeatureFlagStore):
         existing = self.get(feature_name)
 
         if existing is None:
-            raise FlagDoesNotExistError("Feature %s does not exist" % feature_name)
+            msg = f"Feature {feature_name} does not exist"
+            raise FlagDoesNotExistError(msg)
 
         item = FeatureFlagStoreItem(feature_name, existing.raw_is_enabled, meta)
 

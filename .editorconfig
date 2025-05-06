@@ -8,7 +8,7 @@ end_of_line = lf
 indent_size = 4
 indent_style = space
 insert_final_newline = true
-max_line_length = 80
+max_line_length = 120
 trim_trailing_whitespace = true
 
 [*.md]
@@ -17,9 +17,7 @@ trim_trailing_whitespace = false
 [*.py]
 include_trailing_comma = True
 indent_size = 4
-known_django = django,restframework
-known_first_party = eshares
-max_line_length = 79
+max_line_length = 120
 multi_line_output = 5
 not_skip = __init__.py
 sections = FUTURE,STDLIB,DJANGO,THIRDPARTY,FIRSTPARTY,LOCALFOLDER

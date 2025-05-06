@@ -12,7 +12,8 @@
 # language governing permissions and limitations under the License.
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from pyee import BaseEventEmitter
 
@@ -22,11 +23,11 @@ from .types import EventType
 
 class IEventEmitter(metaclass=ABCMeta):
     @abstractmethod
-    def emit(self, event: Any, *args, **kwargs) -> bool:
+    def emit(self, event: Any, *args, **kwargs) -> bool:  # noqa: ANN002, ANN003
         pass
 
     @abstractmethod
-    def on(self, event: Any, f: Optional[Callable] = None) -> bool:
+    def on(self, event: Any, f: Callable | None = None) -> bool:
         pass
 
     @abstractmethod
@@ -44,12 +45,12 @@ class FlipperEventEmitter(BaseEventEmitter, IEventEmitter):
             self.on(event_type, f=self._handler_method_for(subscriber, event_type))
 
     def _handler_method_for(
-        self, subscriber: FlipperEventSubscriber, event_type: EventType
+        self, subscriber: FlipperEventSubscriber, event_type: EventType,
     ) -> Callable:
-        return getattr(subscriber, "on_%s" % event_type.value)
+        return getattr(subscriber, f"on_{event_type.value}")
 
     def remove_subscriber(self, subscriber: FlipperEventSubscriber) -> None:
         for event_type in EventType:
             self.remove_listener(
-                event_type, f=self._handler_method_for(subscriber, event_type)
+                event_type, f=self._handler_method_for(subscriber, event_type),
             )

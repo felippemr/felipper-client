@@ -12,12 +12,12 @@
 # language governing permissions and limitations under the License.
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict
+from typing import Any
 
 
 class AbstractBucketer(metaclass=ABCMeta):
     @abstractmethod
-    def check(self, **checks) -> bool:
+    def check(self, **checks) -> bool:  # noqa: ANN003
         pass
 
     @staticmethod
@@ -26,10 +26,10 @@ class AbstractBucketer(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {"type": self.get_type()}
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, fields: Dict[str, Any]) -> "AbstractBucketer":
+    def from_dict(cls, fields: dict[str, Any]) -> "AbstractBucketer":
         pass

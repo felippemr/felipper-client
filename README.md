@@ -1,13 +1,14 @@
-Flipper
+Flipper or Felipper or Switcheroo
 =======
-![Circle CI Status](https://circleci.com/gh/carta/flipper-client/tree/master.svg?style=shield&circle-token=e401445db3e99e8fac7555bd9ba5040e6a2eb4bd)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+
+This is a modified version of [flipper-client](https://github.com/carta/flipper-client), originally developed by eShares, Inc. dba Carta, Inc.
+Changes made by Felippe da Motta Raposo.
 
 Flipper is a lightweight, easy to use, and flexible library for feature flags in python. It is intended to allow developers to push code to production in a disabled state and carefully control whether or not the code is enabled or disabled without doing additional releases.
 
 # Quickstart
 
-`pip install flipper-client`
+`pip install felipper-client`
 
 
 ```python
@@ -597,87 +598,6 @@ cache = CachedFeatureFlagStore(store, ttl=30)
 client = FeatureFlagClient(cache)
 ```
 
-## Usage with a Thrift RPC server
-
-If you would like to manage feature flags with a custom service that is possible by using the `ThriftRPCFeatureFlagStore` backend. To do this, you will need to implement the `FeatureFlagStore` service defined in `thrift/feature_flag_store.thrift`. Then when you intialize the `ThriftRPCFeatureFlagStore` you will need to pass an instance of a compatible thrift client.
-
-First, install the `thrift` package:
-
-```
-pip install thrift
-```
-
-Example:
-
-```python
-from flipper import FeatureFlagClient, ThriftRPCFeatureFlagStore
-from flipper_thrift.python.feature_flag_store import (
-    FeatureFlagStore as TFeatureFlagStore
-)
-from thrift import Thrift
-from thrift.transport import TSocket
-from thrift.transport import TTransport
-from thrift.protocol import TBinaryProtocol
-
-
-transport = TSocket.TSocket('localhost', 9090)
-transport = TTransport.TBufferedTransport(transport)
-protocol = TBinaryProtocol.TBinaryProtocol(transport)
-
-thrift_client = TFeatureFlagStore.Client(protocol)
-
-transport.open()
-
-store = ThriftRPCFeatureFlagStore(thrift_client)
-client = FeatureFlagClient(store)
-```
-
-*Note: this can also be optimized with the `CachedFeatureFlagStore`. See the redis examples above.*
-
-You will also be required to implement the server, like so:
-
-```python
-import re
-
-from flipper_thrift.python.feature_flag_store import (
-    FeatureFlagStore as TFeatureFlagStore
-)
-from thrift.transport import TSocket
-from thrift.transport import TTransport
-from thrift.protocol import TBinaryProtocol
-from thrift.server import TServer
-
-
-class FeatureFlagStoreServer(object):
-    # Convert TitleCased calls like .Get() to snake_case calls like .get()
-    def __getattribute__(self, attr):
-        try:
-            return object.__getattribute__(self, attr)
-        except AttributeError:
-            return object.__getattribute__(self, self._convert_case(attr))
-
-    def _convert_case(self, name):
-        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
-
-    def create(self, feature_name, is_enabled):
-        pass
-    def delete(self, feature_name):
-        pass
-    def get(self, feature_name):
-        return True
-    def set(self, feature_name, is_enabled):
-        pass
-
-if __name__ == '__main__':
-    server = FeatureFlagStoreServer()
-    processor = TFeatureFlagStore.Processor(server)
-    transport = TSocket.TServerSocket(host='127.0.0.1', port=9090)
-    tfactory = TTransport.TBufferedTransportFactory()
-    pfactory = TBinaryProtocol.TBinaryProtocolFactory()
-    TServer.TSimpleServer(processor, transport, tfactory, pfactory)
-```
-
 ## Usage with Replicated backend
 
 The `ReplicatedFeatureFlagStore` is meant for cases where you have a primary store and one or more secondary stores that you want to replicate your writes to. For example, if you wanted to write to redis, but also record these writes to an auditing system somewhere else.
@@ -871,19 +791,9 @@ client.events.register_subscriber(LoggingEventSubscriber(logger))
 Clone the repo and run `make install-dev` to get the environment set up. Test are run with the `pytest` command.
 
 
-## Building thrift files
-
-First, [install the thrift compiler](https://thrift.apache.org/tutorial/). On mac, the easiest way is to use homebrew:
-
-```
-brew install thrift
-```
-
-Then simply run `make thrift`. Remember to commit the results of the compilation step.
-
 # System requirements
 
-This project requires python version 3 or greater.
+This project requires python version 3.11 or greater.
 
 # Open Source
 
@@ -891,11 +801,11 @@ This library is made availble as open source under the Apache 2.0 license. This 
 
 ## Development status
 
-This project is actively maintained by the maintainers listed in the MAINTAINERS file. There are no major items on the project roadmap at this time, however bug fixes and new features may be added from time to time. We are open to contributions from the community as well.
+This project is actively maintained by the maintainers listed in the MAINTAINERS file.
 
 ## Contacts
 
-The project maintainers can be reached via email at adam.savitzky@carta.com or luis.montiel@carta.com.
+The project maintainers can be reached via email at raposo.felippe@gmail.com
 
 ## Discussion
 

@@ -1,4 +1,4 @@
-# Copyright 2018 eShares, Inc. dba Carta, Inc.
+# Copyright 2018 eShares, Inc. dba Carta, Inc.  # noqa: N999
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ from .subscriber import FlipperEventSubscriber
 from .types import EventType
 
 __all__ = [
-    "FlipperEventEmitter",
-    "IEventEmitter",
-    "FlipperEventSubscriber",
     "EventType",
+    "FlipperEventEmitter",
+    "FlipperEventSubscriber",
+    "IEventEmitter",
 ]

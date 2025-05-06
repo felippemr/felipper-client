@@ -12,13 +12,13 @@
 # language governing permissions and limitations under the License.
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, Optional
+from typing import Any
 
 
 class AbstractOperator(metaclass=ABCMeta):
     @property
     @abstractmethod
-    def SYMBOL(self) -> Optional[str]:
+    def SYMBOL(self) -> str | None:  # noqa: N802
         pass
 
     @abstractmethod

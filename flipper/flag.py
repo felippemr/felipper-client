@@ -10,7 +10,8 @@
 # under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-from typing import TYPE_CHECKING, Iterable
+from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from .bucketing.base import AbstractBucketer
 from .conditions import Condition
@@ -24,25 +25,25 @@ class FeatureFlag:
         self.name = feature_name
         self._client = client
 
-    def is_enabled(self, default=False, **conditions) -> bool:
+    def is_enabled(self, default=False, **conditions) -> bool:  # noqa: ANN001, ANN003
         return self._client.is_enabled(self.name, default=default, **conditions)
 
-    def exists(self):
+    def exists(self):  # noqa: ANN201
         return self._client.exists(self.name)
 
-    def enable(self):
+    def enable(self) -> None:
         self._client.enable(self.name)
 
-    def disable(self):
+    def disable(self) -> None:
         self._client.disable(self.name)
 
-    def destroy(self):
+    def destroy(self) -> None:
         self._client.destroy(self.name)
 
-    def add_condition(self, condition: Condition):
+    def add_condition(self, condition: Condition) -> None:
         self._client.add_condition(self.name, condition)
 
-    def set_client_data(self, client_data: dict):
+    def set_client_data(self, client_data: dict) -> None:
         self._client.set_client_data(self.name, client_data)
 
     def get_client_data(self) -> dict:
@@ -51,8 +52,8 @@ class FeatureFlag:
     def get_meta(self) -> dict:
         return self._client.get_meta(self.name)
 
-    def set_bucketer(self, bucketer: AbstractBucketer):
+    def set_bucketer(self, bucketer: AbstractBucketer) -> None:
         self._client.set_bucketer(self.name, bucketer)
 
-    def set_conditions(self, conditions: Iterable[Condition]):
+    def set_conditions(self, conditions: Iterable[Condition]) -> None:
         self._client.set_conditions(self.name, conditions)

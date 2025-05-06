@@ -13,14 +13,14 @@
 
 import hashlib
 import json
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from .percentage import PercentageFactory
 from .percentage_bucketer import PercentageBucketer
 
 
 class ConsistentHashPercentageBucketer(PercentageBucketer):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:  # noqa: ANN003
         self._key_whitelist = set(kwargs.pop("key_whitelist", []))
         super().__init__(**kwargs)
 
@@ -28,23 +28,23 @@ class ConsistentHashPercentageBucketer(PercentageBucketer):
     def get_type(cls) -> str:
         return "ConsistentHashPercentageBucketer"
 
-    def check(self, randomizer=None, **checks) -> bool:
+    def check(self, randomizer=None, **checks) -> bool:  # noqa: ANN001, ANN003, ARG002
         if self._percentage == 0:
             return False
 
         serialized = self._serialize_checks(checks)
 
-        hashed = hashlib.sha1(serialized)  # nosec
+        hashed = hashlib.sha1(serialized)  # nosec  # noqa: S324
         score = self._score_hash(hashed)
 
         return score <= self._percentage
 
-    def _serialize_checks(self, checks: Dict[str, Any]) -> bytes:
+    def _serialize_checks(self, checks: dict[str, Any]) -> bytes:
         filtered_checks = self._filter_checks(checks)
         sorted_checks = self._sort_checks(filtered_checks)
         return json.dumps(sorted_checks).encode("utf-8")
 
-    def _filter_checks(self, checks: Dict[str, Any]) -> Dict[str, Any]:
+    def _filter_checks(self, checks: dict[str, Any]) -> dict[str, Any]:
         return {k: v for (k, v) in checks.items() if self._should_check_key(k)}
 
     def _should_check_key(self, key: str) -> bool:
@@ -52,13 +52,13 @@ class ConsistentHashPercentageBucketer(PercentageBucketer):
             return True
         return key in self._key_whitelist
 
-    def _sort_checks(self, checks: Dict[str, Any]) -> List[Tuple[str, Any]]:
+    def _sort_checks(self, checks: dict[str, Any]) -> list[tuple[str, Any]]:
         return sorted(checks.items(), key=lambda x: x[0])
 
-    def _score_hash(self, hashed) -> float:
+    def _score_hash(self, hashed) -> float:  # noqa: ANN001
         return (int(hashed.hexdigest(), 16) % 100) / 100
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             **super().to_dict(),
             "type": ConsistentHashPercentageBucketer.get_type(),
@@ -66,7 +66,7 @@ class ConsistentHashPercentageBucketer(PercentageBucketer):
         }
 
     @classmethod
-    def from_dict(cls, fields: Dict[str, Any]) -> "ConsistentHashPercentageBucketer":
+    def from_dict(cls, fields: dict[str, Any]) -> "ConsistentHashPercentageBucketer":
         key_whitelist = fields.get("key_whitelist", [])
         percentage_fields = fields.get("percentage")
         percentage = None

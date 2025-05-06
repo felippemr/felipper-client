@@ -11,13 +11,13 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 from .base import AbstractPercentage
 
 
 class Percentage(AbstractPercentage):
-    def __init__(self, value: Optional[float] = 1.0) -> None:
+    def __init__(self, value: float | None = 1.0) -> None:
         self._value = value
 
     @classmethod
@@ -25,12 +25,12 @@ class Percentage(AbstractPercentage):
         return "Percentage"
 
     @property
-    def value(self):
+    def value(self):  # noqa: ANN201
         return self._value
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {**super().to_dict(), "value": self._value}
 
     @classmethod
-    def from_dict(cls, fields: Dict[str, Any]) -> "Percentage":
+    def from_dict(cls, fields: dict[str, Any]) -> "Percentage":
         return cls(value=fields.get("value"))

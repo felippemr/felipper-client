@@ -11,8 +11,8 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
+from collections.abc import Iterable, Iterator
 from itertools import islice
-from typing import Iterable, Iterator
 
 
 def batchify(iterable: Iterable, chunk_size: int) -> Iterator[list]:

@@ -11,7 +11,7 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import Any, Dict
+from typing import Any
 
 from .base import AbstractPercentage
 from .linear_ramp_percentage import LinearRampPercentage
@@ -19,7 +19,7 @@ from .percentage import Percentage
 
 
 class PercentageFactory:
-    PERCENTAGE_MAP = {
+    PERCENTAGE_MAP = {  # noqa: RUF012
         LinearRampPercentage.get_type(): LinearRampPercentage,
         Percentage.get_type(): Percentage,
     }
@@ -28,10 +28,11 @@ class PercentageFactory:
         pass
 
     @classmethod
-    def create(cls, fields: Dict[str, Any]) -> AbstractPercentage:
+    def create(cls, fields: dict[str, Any]) -> AbstractPercentage:
         try:
-            return cls.PERCENTAGE_MAP[fields["type"]].from_dict(fields)  # type: ignore
+            return cls.PERCENTAGE_MAP[fields["type"]].from_dict(fields)  # type: ignore  # noqa: PGH003
         except KeyError:
-            raise cls.InvalidPercentageTypeError(
-                "Percentage type not supported: %s" % fields["type"]
+            msg = "Percentage type not supported: {}".format(fields["type"])
+            raise cls.InvalidPercentageTypeError(  # noqa: B904
+                msg,
             )

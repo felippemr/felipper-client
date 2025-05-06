@@ -1,6 +1,7 @@
 import unittest
-from typing import Iterable
+from collections.abc import Iterable
 
+import pytest
 import testing.postgresql
 
 from flipper import PostgreSQLFeatureFlagStore
@@ -11,137 +12,137 @@ from flipper.contrib.util.date import now
 Postgresql = testing.postgresql.PostgresqlFactory(cache_initialized_db=True)
 
 
-def tearDownModule(self):
+def tearDownModule(self) -> None:
     Postgresql.clear_cache()
 
 
 class BaseTest(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self._db = Postgresql()
         self.store = PostgreSQLFeatureFlagStore(self._db.url())
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         self._db.stop()
 
 
 class TestRunMigration(unittest.TestCase):
-    def test_run_migration_creates_table(self):
+    def test_run_migration_creates_table(self) -> None:
         db = Postgresql()
         store = PostgreSQLFeatureFlagStore(db.url(), run_migrations=False)
 
         store.run_migrations()
 
-        self.assertIsNone(store.get(""))
+        assert store.get("") is None
 
 
 class TestCreate(BaseTest):
-    def test_feature_flag_exists_when_created(self):
+    def test_feature_flag_exists_when_created(self) -> None:
         feature_name = "test"
 
         item = self.store.create(feature_name)
 
-        self.assertIsNotNone(item)
+        assert item is not None
 
-    def test_create_overrides_when_existing_feature_flag(self):
+    def test_create_overrides_when_existing_feature_flag(self) -> None:
         feature_name = "test"
 
         self.store.create(feature_name)
         new_item = self.store.create(feature_name, client_data={"test": "data"})
 
-        self.assertEqual(new_item.meta, self.store.get(feature_name).meta)
+        assert new_item.meta == self.store.get(feature_name).meta
 
-    def test_is_enabled_is_false_when_created_with_default(self):
+    def test_is_enabled_is_false_when_created_with_default(self) -> None:
         item = self.store.create("test")
 
-        self.assertFalse(item.is_enabled())
+        assert not item.is_enabled()
 
-    def test_is_enabled_is_true_when_created_with_is_enabled(self):
+    def test_is_enabled_is_true_when_created_with_is_enabled(self) -> None:
         item = self.store.create("test", is_enabled=True)
 
-        self.assertTrue(item.is_enabled())
+        assert item.is_enabled()
 
-    def test_is_enabled_is_false_when_created_with_not_is_enabled(self):
+    def test_is_enabled_is_false_when_created_with_not_is_enabled(self) -> None:
         item = self.store.create("test", is_enabled=False)
 
-        self.assertFalse(item.is_enabled())
+        assert not item.is_enabled()
 
-    def test_client_data_is_persisted_when_created_with_client_data(self):
+    def test_client_data_is_persisted_when_created_with_client_data(self) -> None:
         client_data = {"test": "data"}
 
         item = self.store.create("test", client_data=client_data)
 
-        self.assertEqual(item.meta["client_data"], client_data)
+        assert item.meta["client_data"] == client_data
 
 
 class TestGet(BaseTest):
-    def test_returns_none_when_no_such_feature_flag(self):
+    def test_returns_none_when_no_such_feature_flag(self) -> None:
         item = self.store.get("test")
 
-        self.assertIsNone(item)
+        assert item is None
 
 
 class TestList(BaseTest):
-    def _create_several(self, names: Iterable[str]):
+    def _create_several(self, names: Iterable[str]) -> None:
         for name in names:
             self.store.create(name)
 
-    def test_returns_empty_iterator_when_no_feature_flags(self):
+    def test_returns_empty_iterator_when_no_feature_flags(self) -> None:
         items = list(self.store.list())
 
-        self.assertEqual(len(items), 0)
+        assert len(items) == 0
 
-    def test_returns_feature_flags(self):
+    def test_returns_feature_flags(self) -> None:
         expected_names = {"test1", "test2"}
         self._create_several(expected_names)
 
         names = {x.feature_name for x in self.store.list()}
 
-        self.assertSetEqual(names, expected_names)
+        self.assertSetEqual(names, expected_names)  # noqa: PT009
 
-    def test_limits_return_items_when_limit_is_given(self):
+    def test_limits_return_items_when_limit_is_given(self) -> None:
         self._create_several({"test1", "test2"})
 
         items = list(self.store.list(limit=1))
 
-        self.assertEqual(len(items), 1)
+        assert len(items) == 1
 
-    def test_starts_with_offset_when_offset_is_given(self):
+    def test_starts_with_offset_when_offset_is_given(self) -> None:
         self._create_several({"test1", "test2"})
 
         items = list(self.store.list(offset=1))
 
-        self.assertEqual(len(items), 1)
+        assert len(items) == 1
 
 
 class TestSetMeta(BaseTest):
-    def test_raises_exception_for_nonexistent_flag(self):
+    def test_raises_exception_for_nonexistent_flag(self) -> None:
         meta = FeatureFlagStoreMeta(now())
 
-        with self.assertRaises(FlagDoesNotExistError):
+        with pytest.raises(FlagDoesNotExistError):
             self.store.set_meta("test", meta)
 
-    def test_updated_meta(self):
+    def test_updated_meta(self) -> None:
         self.store.create("test")
         expected_meta = FeatureFlagStoreMeta(now(), client_data={"test": "date"})
 
         self.store.set_meta("test", expected_meta)
 
         meta = self.store.get("test").meta
-        self.assertEqual(meta, expected_meta.to_dict())
+        assert meta == expected_meta.to_dict()
 
 
 class TestDelete(BaseTest):
-    def test_does_not_raise_exception_when_no_existing_flag(self):
+    def test_does_not_raise_exception_when_no_existing_flag(self) -> None:
         item = self.store.get("test")
 
-        self.assertIsNone(item)
+        assert item is None
 
         self.store.delete("test")
 
-    def test_deletes_existing_flag(self):
+    def test_deletes_existing_flag(self) -> None:
         self.store.create("test")
 
         self.store.delete("test")
 
         item = self.store.get("test")
-        self.assertIsNone(item)
+        assert item is None

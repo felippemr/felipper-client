@@ -12,41 +12,41 @@
 # language governing permissions and limitations under the License.
 
 from abc import ABCMeta, abstractmethod
-from typing import Iterator, Optional
+from collections.abc import Iterator
 
 from .storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
 
 
 class AbstractFeatureFlagStore(metaclass=ABCMeta):
     @abstractmethod
-    def create(
+    def create(  # noqa: ANN201
         self,
         feature_name: str,
         is_enabled: bool = False,
-        client_data: Optional[dict] = None,
+        client_data: dict | None = None,
     ):
         pass
 
     @abstractmethod
-    def get(self, feature_name: str) -> Optional[FeatureFlagStoreItem]:
+    def get(self, feature_name: str) -> FeatureFlagStoreItem | None:
         pass
 
     @abstractmethod
-    def set(self, feature_name: str, is_enabled: bool):
+    def set(self, feature_name: str, is_enabled: bool):  # noqa: ANN201
         pass
 
     @abstractmethod
-    def delete(self, feature_name: str):
+    def delete(self, feature_name: str):  # noqa: ANN201
         pass
 
     @abstractmethod
     def list(
-        self, limit: Optional[int] = None, offset: int = 0
+        self, limit: int | None = None, offset: int = 0,
     ) -> Iterator[FeatureFlagStoreItem]:
         pass
 
     @abstractmethod
-    def set_meta(self, feature_name: str, meta: FeatureFlagStoreMeta):
+    def set_meta(self, feature_name: str, meta: FeatureFlagStoreMeta):  # noqa: ANN201
         pass
 
 

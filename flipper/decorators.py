@@ -11,20 +11,20 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from .client import FeatureFlagClient
 
 
-def is_enabled(
-    flags: FeatureFlagClient, feature_name: str, redirect: Optional[Callable] = None
+def is_enabled(  # noqa: ANN201
+    flags: FeatureFlagClient, feature_name: str, redirect: Callable | None = None,
 ):
-    def decorator(fn):
-        def wrapper(*args, **kwargs):
+    def decorator(fn):  # noqa: ANN001, ANN202
+        def wrapper(*args, **kwargs):  # noqa: ANN002, ANN003, ANN202
             if flags.is_enabled(feature_name):
                 return fn(*args, **kwargs)
             if redirect is None:
-                return
+                return None
             return redirect(*args, **kwargs)
 
         return wrapper

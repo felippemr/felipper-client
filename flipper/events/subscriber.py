@@ -11,7 +11,7 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import Iterable, Optional
+from collections.abc import Iterable
 
 from flipper.bucketing.base import AbstractBucketer
 from flipper.conditions import Condition
@@ -19,53 +19,53 @@ from flipper.conditions import Condition
 
 class FlipperEventSubscriber:
     def on_pre_create(
-        self, flag_name: str, is_enabled: bool, client_data: Optional[dict]
-    ):
+        self, flag_name: str, is_enabled: bool, client_data: dict | None,
+    ) -> None:
         pass
 
     def on_post_create(
-        self, flag_name: str, is_enabled: bool, client_data: Optional[dict]
-    ):
+        self, flag_name: str, is_enabled: bool, client_data: dict | None,
+    ) -> None:
         pass
 
-    def on_pre_enable(self, flag_name: str):
+    def on_pre_enable(self, flag_name: str) -> None:
         pass
 
-    def on_post_enable(self, flag_name: str):
+    def on_post_enable(self, flag_name: str) -> None:
         pass
 
-    def on_pre_disable(self, flag_name: str):
+    def on_pre_disable(self, flag_name: str) -> None:
         pass
 
-    def on_post_disable(self, flag_name: str):
+    def on_post_disable(self, flag_name: str) -> None:
         pass
 
-    def on_pre_destroy(self, flag_name: str):
+    def on_pre_destroy(self, flag_name: str) -> None:
         pass
 
-    def on_post_destroy(self, flag_name: str):
+    def on_post_destroy(self, flag_name: str) -> None:
         pass
 
-    def on_pre_add_condition(self, flag_name: str, condition: Condition):
+    def on_pre_add_condition(self, flag_name: str, condition: Condition) -> None:
         pass
 
-    def on_post_add_condition(self, flag_name: str, condition: Condition):
+    def on_post_add_condition(self, flag_name: str, condition: Condition) -> None:
         pass
 
-    def on_pre_set_conditions(self, flag_name: str, conditions: Iterable[Condition]):
+    def on_pre_set_conditions(self, flag_name: str, conditions: Iterable[Condition]) -> None:
         pass
 
-    def on_post_set_conditions(self, flag_name: str, conditions: Iterable[Condition]):
+    def on_post_set_conditions(self, flag_name: str, conditions: Iterable[Condition]) -> None:
         pass
 
-    def on_pre_set_client_data(self, flag_name: str, client_data: dict):
+    def on_pre_set_client_data(self, flag_name: str, client_data: dict) -> None:
         pass
 
-    def on_post_set_client_data(self, flag_name: str, client_data: dict):
+    def on_post_set_client_data(self, flag_name: str, client_data: dict) -> None:
         pass
 
-    def on_pre_set_bucketer(self, flag_name: str, bucketer: AbstractBucketer):
+    def on_pre_set_bucketer(self, flag_name: str, bucketer: AbstractBucketer) -> None:
         pass
 
-    def on_post_set_bucketer(self, flag_name: str, bucketer: AbstractBucketer):
+    def on_post_set_bucketer(self, flag_name: str, bucketer: AbstractBucketer) -> None:
         pass

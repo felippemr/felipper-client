@@ -11,8 +11,8 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
+from collections.abc import Iterator
 from contextlib import contextmanager
-from typing import Iterator, Optional
 
 from .interface import AbstractFeatureFlagStore, FlagDoesNotExistError
 from .storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
@@ -38,10 +38,10 @@ SELECT_ITEM_SQL = "SELECT {} FROM {} WHERE {} = %s"
 UPDATE_ITEM_SQL = "UPDATE {} SET {} = %s WHERE {} = %s"
 
 
-class PostgresNotEnabled(Exception):
-    def __init__(self):
+class PostgresNotEnabled(Exception):  # noqa: N818
+    def __init__(self) -> None:
         super().__init__(
-            "Postgres is not enabled, please install extra dependency [postgres]"
+            "Postgres is not enabled, please install extra dependency [postgres]",
         )
 
 
@@ -55,7 +55,7 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
         run_migrations: bool = True,
     ) -> None:
         if not POSTGRES_ENABLED:
-            raise PostgresNotEnabled()
+            raise PostgresNotEnabled
         self._conninfo = conninfo
         self._table_name = sql.Identifier(table_name)
         self._name_column = sql.Identifier(name_column)
@@ -74,7 +74,7 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
     def run_migrations(self) -> None:
         with self._connection() as conn:
             query = sql.SQL(CREATE_TABLE_SQL).format(
-                self._table_name, self._name_column, self._item_column
+                self._table_name, self._name_column, self._item_column,
             )
             conn.execute(query)
             conn.commit()
@@ -82,7 +82,7 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
     def _update(self, item: FeatureFlagStoreItem) -> None:
         with self._connection() as conn:
             query = sql.SQL(UPDATE_ITEM_SQL).format(
-                self._table_name, self._item_column, self._name_column
+                self._table_name, self._item_column, self._name_column,
             )
             conn.execute(query, (item.serialize(), item.feature_name))
             conn.commit()
@@ -91,10 +91,10 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
         self,
         feature_name: str,
         is_enabled: bool = False,
-        client_data: Optional[dict] = None,
+        client_data: dict | None = None,
     ) -> FeatureFlagStoreItem:
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta(now(), client_data)
+            feature_name, is_enabled, FeatureFlagStoreMeta(now(), client_data),
         )
 
         with self._connection() as conn:
@@ -110,10 +110,10 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
 
         return item
 
-    def get(self, feature_name: str) -> Optional[FeatureFlagStoreItem]:
+    def get(self, feature_name: str) -> FeatureFlagStoreItem | None:
         with self._connection() as conn:
             query = sql.SQL(SELECT_ITEM_SQL).format(
-                self._item_column, self._table_name, self._name_column
+                self._item_column, self._table_name, self._name_column,
             )
             row = conn.execute(query, (feature_name,)).fetchone()
 
@@ -128,12 +128,12 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
             self.create(feature_name, is_enabled)
         else:
             item = FeatureFlagStoreItem(
-                feature_name, is_enabled, FeatureFlagStoreMeta.from_dict(existing.meta)
+                feature_name, is_enabled, FeatureFlagStoreMeta.from_dict(existing.meta),
             )
             self._update(item)
 
     def list(
-        self, limit: Optional[int] = None, offset: int = 0
+        self, limit: int | None = None, offset: int = 0,
     ) -> Iterator[FeatureFlagStoreItem]:
         with self._connection() as conn:
             query = sql.SQL(LIST_ITEMS_SQL).format(
@@ -151,7 +151,8 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
         existing = self.get(feature_name)
 
         if existing is None:
-            raise FlagDoesNotExistError(f"Feature {feature_name} does not exist")
+            msg = f"Feature {feature_name} does not exist"
+            raise FlagDoesNotExistError(msg)
 
         item = FeatureFlagStoreItem(feature_name, existing.raw_is_enabled, meta)
 

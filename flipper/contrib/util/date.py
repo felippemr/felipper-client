@@ -15,4 +15,4 @@ from datetime import datetime
 
 
 def now() -> int:
-    return int(datetime.now().timestamp())
+    return int(datetime.now().timestamp())  # noqa: DTZ005

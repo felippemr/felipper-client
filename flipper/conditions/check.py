@@ -11,7 +11,8 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import Any, Tuple
+import contextlib
+from typing import Any
 
 from .operators import Operator
 from .operators.interface import AbstractOperator
@@ -26,33 +27,31 @@ class Check:
         self._operator = operator
 
     @property
-    def variable(self):
+    def variable(self):  # noqa: ANN201
         return self._variable
 
     @property
-    def value(self):
+    def value(self):  # noqa: ANN201
         return self._value
 
     @property
-    def operator(self):
+    def operator(self):  # noqa: ANN201
         return self._operator
 
-    def check(self, value):
+    def check(self, value):  # noqa: ANN001, ANN201
         return self._operator.compare(value, self._value)
 
     @classmethod
-    def factory(cls, check_key: str, check_value: Any):
+    def factory(cls, check_key: str, check_value: Any):  # noqa: ANN206
         variable, operator = cls._parse_check_key(check_key)
         return cls(variable, check_value, operator)
 
     @classmethod
-    def _parse_check_key(cls, check_key: str) -> Tuple[str, AbstractOperator]:
+    def _parse_check_key(cls, check_key: str) -> tuple[str, AbstractOperator]:
         variable, raw_operator = check_key, None
 
-        try:
+        with contextlib.suppress(ValueError):
             variable, raw_operator = check_key.split(OPERATOR_DELIMITER)
-        except ValueError:
-            pass
 
         return variable, Operator.factory(raw_operator)
 
@@ -66,7 +65,7 @@ class Check:
     @classmethod
     def from_dict(cls, fields: dict) -> "Check":
         return cls(
-            fields["variable"], fields["value"], Operator.factory(fields["operator"])
+            fields["variable"], fields["value"], Operator.factory(fields["operator"]),
         )
 
     @classmethod

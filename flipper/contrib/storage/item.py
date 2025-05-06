@@ -20,13 +20,13 @@ from .meta import FeatureFlagStoreMeta
 
 class FeatureFlagStoreItem:
     def __init__(
-        self, feature_name: str, is_enabled: bool, meta: FeatureFlagStoreMeta
+        self, feature_name: str, is_enabled: bool, meta: FeatureFlagStoreMeta,
     ) -> None:
         self.feature_name = feature_name
         self._is_enabled = is_enabled
         self._meta = meta
 
-    def to_dict(self):
+    def to_dict(self):  # noqa: ANN201
         return {
             "feature_name": self.feature_name,
             "is_enabled": self._is_enabled,
@@ -47,14 +47,14 @@ class FeatureFlagStoreItem:
         )
 
     @property
-    def raw_is_enabled(self):
+    def raw_is_enabled(self):  # noqa: ANN201
         return self._is_enabled
 
-    def is_enabled(self, **conditions) -> bool:
+    def is_enabled(self, **conditions) -> bool:  # noqa: ANN003
         if self._is_enabled is False:
             return False
 
-        if len(conditions) and self._has_conditions():
+        if conditions and self._has_conditions():
             return self._all_conditions_satisfied(**conditions)
 
         if self._has_bucketer():
@@ -62,7 +62,7 @@ class FeatureFlagStoreItem:
 
         return True
 
-    def _all_conditions_satisfied(self, **conditions) -> bool:
+    def _all_conditions_satisfied(self, **conditions) -> bool:  # noqa: ANN003
         return all(c.check(**conditions) for c in self._meta.conditions)
 
     def _has_bucketer(self) -> bool:
@@ -72,5 +72,5 @@ class FeatureFlagStoreItem:
         return len(self._meta.conditions) > 0
 
     @property
-    def meta(self):
+    def meta(self):  # noqa: ANN201
         return self._meta.to_dict()

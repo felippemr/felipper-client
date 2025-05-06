@@ -11,7 +11,6 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import List, Optional
 
 from flipper.bucketing import BucketerFactory, NoOpBucketer
 from flipper.bucketing.base import AbstractBucketer
@@ -22,16 +21,16 @@ class FeatureFlagStoreMeta:
     def __init__(
         self,
         created_date: int,
-        client_data: Optional[dict] = None,
-        conditions: Optional[List[Condition]] = None,
-        bucketer: Optional[AbstractBucketer] = None,
+        client_data: dict | None = None,
+        conditions: list[Condition] | None = None,
+        bucketer: AbstractBucketer | None = None,
     ) -> None:
         self.created_date = created_date
         self.client_data = client_data or {}
         self.conditions = conditions or []
         self.bucketer = bucketer or NoOpBucketer()
 
-    def to_dict(self):
+    def to_dict(self):  # noqa: ANN201
         return {
             "client_data": self.client_data,
             "created_date": self.created_date,
@@ -40,7 +39,7 @@ class FeatureFlagStoreMeta:
         }
 
     @classmethod
-    def from_dict(cls, fields: dict):
+    def from_dict(cls, fields: dict):  # noqa: ANN206
         kwargs = {
             "client_data": fields.get("client_data", []),
             "conditions": [
@@ -57,11 +56,11 @@ class FeatureFlagStoreMeta:
 
     def update(
         self,
-        created_date: Optional[int] = None,
-        client_data: Optional[dict] = None,
-        conditions: Optional[List[Condition]] = None,
-        bucketer: Optional[AbstractBucketer] = None,
-    ):
+        created_date: int | None = None,
+        client_data: dict | None = None,
+        conditions: list[Condition] | None = None,
+        bucketer: AbstractBucketer | None = None,
+    ) -> None:
         if created_date is not None:
             self.created_date = created_date
         if client_data is not None:
@@ -71,5 +70,5 @@ class FeatureFlagStoreMeta:
         if bucketer is not None:
             self.bucketer = bucketer
 
-    def _merge_client_data(self, client_data: dict):
+    def _merge_client_data(self, client_data: dict) -> None:
         self.client_data.update(client_data)

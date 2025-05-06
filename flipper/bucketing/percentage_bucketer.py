@@ -12,7 +12,7 @@
 # language governing permissions and limitations under the License.
 
 import random
-from typing import Any, Dict
+from typing import Any
 
 from .base import AbstractBucketer
 from .percentage import AbstractPercentage, Percentage, PercentageFactory
@@ -27,19 +27,19 @@ class PercentageBucketer(AbstractBucketer):
         return "PercentageBucketer"
 
     @property
-    def percentage(self):
+    def percentage(self):  # noqa: ANN201
         return self._percentage.value
 
-    def check(self, randomizer=random.random, **checks) -> bool:
+    def check(self, randomizer=random.random, **checks) -> bool:  # noqa: ANN001, ANN003, ARG002
         if self._percentage == 0.0:
             return False
         return randomizer() <= self._percentage
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {**super().to_dict(), "percentage": self._percentage.to_dict()}
 
     @classmethod
-    def from_dict(cls, fields: Dict[str, Any]) -> "PercentageBucketer":
+    def from_dict(cls, fields: dict[str, Any]) -> "PercentageBucketer":
         percentage = None
         percentage_fields = fields.get("percentage")
         if percentage_fields is not None:

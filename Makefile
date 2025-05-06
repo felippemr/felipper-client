@@ -1,62 +1,29 @@
-THRIFT_DIR=./flipper_thrift
-THRIFT_PYTHON=${THRIFT_DIR}/python
 PKG_VERSION = $(shell python -c "import pkg_resources; print(pkg_resources.require('flipper-client')[0].version)")
 
+.PHONY: help install install-dev clean version publish hooks mypy
 
-install:
-	python setup.py install
+help: ## Show this help message
+	@echo "Available targets:"
+	@grep -E '^[a-zA-Z0-9_-]+:.*## ' $(MAKEFILE_LIST) | sed -E 's/^([a-zA-Z0-9_-]+):.*## (.*)/\1\t\2/' | sort
 
+install: ## Install the package
+	uv pip install .
 
-install-dev:
-	pip install -e .[dev]
-	pre-commit install
-	pre-commit install-hooks
+install-dev: ## Install development dependencies
+	uv pip install .[dev]
 
-
-virtualenv: virtualenv-install
-
-
-virtualenv-install:
-	@pyenv virtualenv -p python3.6 3.6.5 flipper-client
-
-
-thrift:
-	thrift -r --gen py -out ${THRIFT_PYTHON} ${THRIFT_DIR}/*.thrift
-
-
-clean:
+clean: ## Clean up build artifacts
 	@rm -rf build
 	@rm -rf dist
 
-
-build: clean
-	python setup.py sdist bdist_wheel
-
-
-version:
+version: ## Show the package version
 	@echo ${PKG_VERSION}
 
+publish: ## Publish the package
+	uv publish .
 
-publish: build
-	twine upload dist/*
-
-
-hooks:
+hooks: ## Run pre-commit hooks
 	pre-commit run --all-files
 
-
-mypy:
+mypy: ## Run type checks with mypy
 	@mypy --follow-imports=silent --ignore-missing-imports flipper
-
-
-circleci-install:
-	brew install circleci
-	circleci setup
-
-
-validate-circleci:
-	circleci config validate
-
-
-exec-circleci: validate-circleci
-	circleci local execute

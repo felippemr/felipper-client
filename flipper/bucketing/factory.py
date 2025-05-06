@@ -11,7 +11,7 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import Any, Dict
+from typing import Any
 
 from .base import AbstractBucketer
 from .consistent_hash_percentage_bucketer import ConsistentHashPercentageBucketer
@@ -20,7 +20,7 @@ from .percentage_bucketer import PercentageBucketer
 
 
 class BucketerFactory:
-    BUCKETER_MAP = {
+    BUCKETER_MAP = {  # noqa: RUF012
         ConsistentHashPercentageBucketer.get_type(): ConsistentHashPercentageBucketer,
         NoOpBucketer.get_type(): NoOpBucketer,
         PercentageBucketer.get_type(): PercentageBucketer,
@@ -30,10 +30,11 @@ class BucketerFactory:
         pass
 
     @classmethod
-    def create(cls, fields: Dict[str, Any]) -> AbstractBucketer:
+    def create(cls, fields: dict[str, Any]) -> AbstractBucketer:
         try:
-            return cls.BUCKETER_MAP[fields["type"]].from_dict(fields)  # type: ignore
+            return cls.BUCKETER_MAP[fields["type"]].from_dict(fields)  # type: ignore  # noqa: PGH003
         except KeyError:
-            raise cls.InvalidBucketerTypeError(
-                "Bucketer type not supported: %s" % fields["type"]
+            msg = "Bucketer type not supported: {}".format(fields["type"])
+            raise cls.InvalidBucketerTypeError(  # noqa: B904
+                msg,
             )

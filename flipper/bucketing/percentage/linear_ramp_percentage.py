@@ -12,7 +12,7 @@
 # language governing permissions and limitations under the License.
 
 from datetime import datetime
-from typing import Any, Dict, Optional, cast
+from typing import Any, cast
 
 from .base import AbstractPercentage
 
@@ -23,15 +23,15 @@ class LinearRampPercentage(AbstractPercentage):
         initial_value: float = 0.0,
         final_value: float = 1.0,
         ramp_duration: int = 3600,
-        initial_time: Optional[int] = None,
+        initial_time: int | None = None,
     ) -> None:
         self._initial_value = initial_value
         self._final_value = final_value
         self._ramp_duration = ramp_duration
         if initial_time is None:
-            self._initial_time = datetime.now()
+            self._initial_time = datetime.now()  # noqa: DTZ005
         else:
-            self._initial_time = datetime.fromtimestamp(initial_time)
+            self._initial_time = datetime.fromtimestamp(initial_time)  # noqa: DTZ006
 
     @classmethod
     def get_type(cls) -> str:
@@ -49,9 +49,9 @@ class LinearRampPercentage(AbstractPercentage):
 
     @property
     def dt(self) -> float:
-        return (datetime.now() - self._initial_time).total_seconds()
+        return (datetime.now() - self._initial_time).total_seconds()  # noqa: DTZ005
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             **super().to_dict(),
             "initial_value": self._initial_value,
@@ -61,10 +61,10 @@ class LinearRampPercentage(AbstractPercentage):
         }
 
     @classmethod
-    def from_dict(cls, fields: Dict[str, Any]) -> "LinearRampPercentage":
+    def from_dict(cls, fields: dict[str, Any]) -> "LinearRampPercentage":
         return cls(
-            initial_value=cast(float, fields.get("initial_value", 0.0)),
-            final_value=cast(float, fields.get("final_value", 1.0)),
-            ramp_duration=cast(int, fields.get("ramp_duration", 3600)),
+            initial_value=cast("float", fields.get("initial_value", 0.0)),
+            final_value=cast("float", fields.get("final_value", 1.0)),
+            ramp_duration=cast("int", fields.get("ramp_duration", 3600)),
             initial_time=fields.get("initial_time"),
         )

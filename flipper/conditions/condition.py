@@ -13,27 +13,27 @@
 
 import copy
 from collections import defaultdict
-from typing import Any, Dict, List
+from typing import Any
 
 from .check import Check
 
 
 class Condition:
-    def __init__(self, **checks):
+    def __init__(self, **checks) -> None:  # noqa: ANN003
         self._checks = self._parse_checks(checks)
 
     @property
-    def checks(self) -> Dict[str, List[Check]]:
+    def checks(self) -> dict[str, list[Check]]:
         return copy.deepcopy(self._checks)
 
-    def _parse_checks(self, checks: Dict[str, Any]) -> Dict[str, List[Check]]:
+    def _parse_checks(self, checks: dict[str, Any]) -> dict[str, list[Check]]:
         parsed_checks = defaultdict(list)  # type: Dict[str, List[Check]]
         for check_key, check_value in checks.items():
             check = Check.factory(check_key, check_value)
             parsed_checks[check.variable].append(check)
         return parsed_checks
 
-    def check(self, **checks) -> bool:
+    def check(self, **checks) -> bool:  # noqa: ANN003
         for check_name, check_value in checks.items():
             checkers = self._checks[check_name]
 
@@ -42,17 +42,17 @@ class Condition:
                     return False
         return True
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             variable: [check.to_dict() for check in checkers]
             for variable, checkers in self._checks.items()
         }
 
     @classmethod
-    def from_dict(cls, conditions: Dict[str, Any]) -> "Condition":
+    def from_dict(cls, conditions: dict[str, Any]) -> "Condition":
         constructor_kwargs = {}
 
-        for _, checks in conditions.items():
+        for checks in conditions.values():
             for check in checks:
                 check_key = cls._make_key_for_check(check)
                 constructor_kwargs[check_key] = check["value"]
@@ -60,5 +60,5 @@ class Condition:
         return cls(**constructor_kwargs)
 
     @classmethod
-    def _make_key_for_check(cls, check: Dict[str, Any]) -> str:
+    def _make_key_for_check(cls, check: dict[str, Any]) -> str:
         return Check.make_check_key(check["variable"], check["operator"])

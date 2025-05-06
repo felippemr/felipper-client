@@ -11,7 +11,7 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import Iterator, Optional
+from collections.abc import Iterator
 
 from cachetools import LRUCache, TTLCache
 
@@ -27,7 +27,7 @@ class CachedFeatureFlagStore(AbstractFeatureFlagStore):
         self,
         store: AbstractFeatureFlagStore,
         size: int = DEFAULT_SIZE,
-        ttl: Optional[int] = None,
+        ttl: int | None = None,
     ) -> None:
         if ttl is not None:
             self._cache = TTLCache(size, ttl)
@@ -40,15 +40,15 @@ class CachedFeatureFlagStore(AbstractFeatureFlagStore):
         self,
         feature_name: str,
         is_enabled: bool = False,
-        client_data: Optional[dict] = None,
+        client_data: dict | None = None,
     ) -> FeatureFlagStoreItem:
         item = self._store.create(
-            feature_name, is_enabled=is_enabled, client_data=client_data
+            feature_name, is_enabled=is_enabled, client_data=client_data,
         )
         self._cache[feature_name] = item
         return item
 
-    def get(self, feature_name: str) -> Optional[FeatureFlagStoreItem]:
+    def get(self, feature_name: str) -> FeatureFlagStoreItem | None:
         try:
             return self._cache[feature_name]
         except KeyError:
@@ -59,19 +59,19 @@ class CachedFeatureFlagStore(AbstractFeatureFlagStore):
 
         return item
 
-    def set(self, feature_name: str, is_enabled: bool):
+    def set(self, feature_name: str, is_enabled: bool) -> None:
         self._store.set(feature_name, is_enabled)
         self._cache[feature_name] = self._store.get(feature_name)
 
-    def delete(self, feature_name: str):
+    def delete(self, feature_name: str) -> None:
         self._store.delete(feature_name)
         self._cache.pop(feature_name, None)
 
     def list(
-        self, limit: Optional[int] = None, offset: int = 0
+        self, limit: int | None = None, offset: int = 0,
     ) -> Iterator[FeatureFlagStoreItem]:
         return self._store.list(limit=limit, offset=offset)
 
-    def set_meta(self, feature_name: str, meta: FeatureFlagStoreMeta):
+    def set_meta(self, feature_name: str, meta: FeatureFlagStoreMeta) -> None:
         self._store.set_meta(feature_name, meta)
         self._cache[feature_name] = self._store.get(feature_name)

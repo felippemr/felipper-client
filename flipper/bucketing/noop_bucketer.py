@@ -11,7 +11,7 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from typing import Any, Dict
+from typing import Any
 
 from .base import AbstractBucketer
 
@@ -21,12 +21,12 @@ class NoOpBucketer(AbstractBucketer):
     def get_type(cls) -> str:
         return "NoOpBucketer"
 
-    def check(self, **checks) -> bool:
+    def check(self, **checks) -> bool:  # noqa: ANN003, ARG002
         return True
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return super().to_dict()
 
     @classmethod
-    def from_dict(cls, fields: Dict[str, Any]) -> "NoOpBucketer":
+    def from_dict(cls, fields: dict[str, Any]) -> "NoOpBucketer":  # noqa: ARG003
         return cls()
