@@ -14,8 +14,8 @@
 from collections.abc import Callable, Iterator
 from threading import Thread
 
-from .interface import AbstractFeatureFlagStore
-from .storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
+from flipper.contrib.interface import AbstractFeatureFlagStore
+from flipper.contrib.storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
 
 StoreType = AbstractFeatureFlagStore
 

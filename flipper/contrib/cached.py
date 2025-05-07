@@ -15,8 +15,8 @@ from collections.abc import Iterator
 
 from cachetools import LRUCache, TTLCache
 
-from .interface import AbstractFeatureFlagStore
-from .storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
+from flipper.contrib.interface import AbstractFeatureFlagStore
+from flipper.contrib.storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
 
 DEFAULT_SIZE = 5000
 DEFAULT_TTL = None

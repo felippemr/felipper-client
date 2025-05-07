@@ -1,4 +1,4 @@
-# Copyright 2018 eShares, Inc. dba Carta, Inc.  # noqa: N999
+# Copyright 2018 eShares, Inc. dba Carta, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,14 +11,13 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-from .cached import CachedFeatureFlagStore
-from .consul import ConsulFeatureFlagStore
-from .memory import MemoryFeatureFlagStore
-from .postgresql import PostgreSQLFeatureFlagStore
-from .redis import RedisFeatureFlagStore
-from .replicated import ReplicatedFeatureFlagStore
-from .s3 import S3FeatureFlagStore
-from .thrift import ThriftRPCFeatureFlagStore
+from flipper.contrib.cached import CachedFeatureFlagStore
+from flipper.contrib.consul import ConsulFeatureFlagStore
+from flipper.contrib.memory import MemoryFeatureFlagStore
+from flipper.contrib.postgresql import PostgreSQLFeatureFlagStore
+from flipper.contrib.redis import RedisFeatureFlagStore
+from flipper.contrib.replicated import ReplicatedFeatureFlagStore
+from flipper.contrib.s3 import S3FeatureFlagStore
 
 __all__ = [
     "CachedFeatureFlagStore",
@@ -28,5 +27,4 @@ __all__ = [
     "RedisFeatureFlagStore",
     "ReplicatedFeatureFlagStore",
     "S3FeatureFlagStore",
-    "ThriftRPCFeatureFlagStore",
 ]

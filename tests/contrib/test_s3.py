@@ -4,7 +4,7 @@ from uuid import uuid4
 
 import boto3
 import pytest
-from moto import mock_s3
+from moto import mock_aws
 
 from flipper import S3FeatureFlagStore
 from flipper.contrib.interface import FlagDoesNotExistError
@@ -13,7 +13,7 @@ from flipper.contrib.storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
 
 class BaseTest(unittest.TestCase):
     def setUp(self) -> None:
-        self.s3 = mock_s3()
+        self.s3 = mock_aws()
         self.s3.start()
         self.conn = boto3.resource(
             "s3",
@@ -21,7 +21,7 @@ class BaseTest(unittest.TestCase):
             aws_secret_access_key="aws_secret_access_key",  # noqa: S106
         )
         self.bucket_name = "flipper"
-        self.bucket = self.conn.create_bucket(Bucket=self.bucket_name)
+        self.bucket = self.conn.create_bucket(Bucket=self.bucket_name)  # type: ignore[reportArgumentType]
         self.client = boto3.client(
             "s3",
             aws_access_key_id="aws_access_key_id",
@@ -45,30 +45,34 @@ class TestCreate(BaseTest):
 
         self.store.create(feature_name, is_enabled=True)
 
-        assert self.store.get(feature_name).is_enabled()
+        result = self.store.get(feature_name)
+        assert result
+        assert result.is_enabled()
 
     def test_is_enabled_is_true_when_created_with_default_false(self) -> None:
         feature_name = self.txt()
 
         self.store.create(feature_name, is_enabled=False)
 
-        assert not self.store.get(feature_name).is_enabled()
+        result = self.store.get(feature_name)
+        assert result
+        assert not result.is_enabled()
 
     def test_is_enabled_is_false_when_created_with_default(self) -> None:
         feature_name = self.txt()
 
         self.store.create(feature_name)
 
-        assert not self.store.get(feature_name).is_enabled()
+        result = self.store.get(feature_name)
+        assert result
+        assert not result.is_enabled()
 
     def test_sets_correct_value_in_s3_with_is_enabled_true(self) -> None:
         feature_name = self.txt()
 
         self.store.create(feature_name, is_enabled=True)
 
-        serialized = self.client.get_object(Bucket=self.bucket_name, Key=feature_name)[
-            "Body"
-        ].read()
+        serialized = self.client.get_object(Bucket=self.bucket_name, Key=feature_name)["Body"].read()
 
         assert FeatureFlagStoreItem.deserialize(serialized).is_enabled()
 
@@ -77,9 +81,7 @@ class TestCreate(BaseTest):
 
         self.store.create(feature_name, is_enabled=False)
 
-        serialized = self.client.get_object(Bucket=self.bucket_name, Key=feature_name)[
-            "Body"
-        ].read()
+        serialized = self.client.get_object(Bucket=self.bucket_name, Key=feature_name)["Body"].read()
 
         assert not FeatureFlagStoreItem.deserialize(serialized).is_enabled()
 
@@ -88,9 +90,7 @@ class TestCreate(BaseTest):
 
         self.store.create(feature_name)
 
-        serialized = self.client.get_object(Bucket=self.bucket_name, Key=feature_name)[
-            "Body"
-        ].read()
+        serialized = self.client.get_object(Bucket=self.bucket_name, Key=feature_name)["Body"].read()
 
         assert not FeatureFlagStoreItem.deserialize(serialized).is_enabled()
 
@@ -117,7 +117,9 @@ class TestSet(BaseTest):
 
         self.store.set(feature_name, True)
 
-        assert self.store.get(feature_name).is_enabled()
+        result = self.store.get(feature_name)
+        assert result
+        assert result.is_enabled()
 
     def test_sets_correct_value_when_false(self) -> None:
         feature_name = self.txt()
@@ -126,7 +128,9 @@ class TestSet(BaseTest):
 
         self.store.set(feature_name, False)
 
-        assert not self.store.get(feature_name).is_enabled()
+        result = self.store.get(feature_name)
+        assert result
+        assert not result.is_enabled()
 
     def test_sets_correct_value_in_s3_when_true(self) -> None:
         feature_name = self.txt()
@@ -134,9 +138,7 @@ class TestSet(BaseTest):
         self.store.create(feature_name)
         self.store.set(feature_name, True)
 
-        serialized = self.client.get_object(Bucket=self.bucket_name, Key=feature_name)[
-            "Body"
-        ].read()
+        serialized = self.client.get_object(Bucket=self.bucket_name, Key=feature_name)["Body"].read()
 
         assert FeatureFlagStoreItem.deserialize(serialized).is_enabled()
 
@@ -146,9 +148,7 @@ class TestSet(BaseTest):
         self.store.create(feature_name)
         self.store.set(feature_name, False)
 
-        serialized = self.client.get_object(Bucket=self.bucket_name, Key=feature_name)[
-            "Body"
-        ].read()
+        serialized = self.client.get_object(Bucket=self.bucket_name, Key=feature_name)["Body"].read()
 
         assert not FeatureFlagStoreItem.deserialize(serialized).is_enabled()
 
@@ -157,7 +157,9 @@ class TestSet(BaseTest):
 
         self.store.set(feature_name, True)
 
-        assert self.store.get(feature_name).is_enabled()
+        result = self.store.get(feature_name)
+        assert result
+        assert result.is_enabled()
 
 
 class TestDelete(BaseTest):
@@ -264,6 +266,7 @@ class TestSetMeta(BaseTest):
 
         item = self.store.get(feature_name)
 
+        assert item
         assert client_data == item.meta["client_data"]
 
     def test_sets_created_date_correctly(self) -> None:
@@ -278,9 +281,10 @@ class TestSetMeta(BaseTest):
 
         item = self.store.get(feature_name)
 
+        assert item
         assert created_date == item.meta["created_date"]
 
     def test_raises_exception_for_nonexistent_flag(self) -> None:
         feature_name = self.txt()
         with pytest.raises(FlagDoesNotExistError):
-            self.store.set_meta(feature_name, {"a": self.txt()})
+            self.store.set_meta(feature_name, {"a": self.txt()})  # type: ignore[reportArgumentType]

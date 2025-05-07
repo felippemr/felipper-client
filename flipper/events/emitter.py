@@ -15,7 +15,7 @@ from abc import ABCMeta, abstractmethod
 from collections.abc import Callable
 from typing import Any
 
-from pyee import BaseEventEmitter
+from pyee.base import EventEmitter
 
 from .subscriber import FlipperEventSubscriber
 from .types import EventType
@@ -27,7 +27,7 @@ class IEventEmitter(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def on(self, event: Any, f: Callable | None = None) -> bool:
+    def on(self, event: Any, f: Callable | None = None) -> Callable:
         pass
 
     @abstractmethod
@@ -39,18 +39,21 @@ class IEventEmitter(metaclass=ABCMeta):
         pass
 
 
-class FlipperEventEmitter(BaseEventEmitter, IEventEmitter):
+class FlipperEventEmitter(EventEmitter, IEventEmitter):
     def register_subscriber(self, subscriber: FlipperEventSubscriber) -> None:
         for event_type in EventType:
             self.on(event_type, f=self._handler_method_for(subscriber, event_type))
 
     def _handler_method_for(
-        self, subscriber: FlipperEventSubscriber, event_type: EventType,
+        self,
+        subscriber: FlipperEventSubscriber,
+        event_type: EventType,
     ) -> Callable:
         return getattr(subscriber, f"on_{event_type.value}")
 
     def remove_subscriber(self, subscriber: FlipperEventSubscriber) -> None:
         for event_type in EventType:
             self.remove_listener(
-                event_type, f=self._handler_method_for(subscriber, event_type),
+                event_type,
+                f=self._handler_method_for(subscriber, event_type),
             )

@@ -8,7 +8,7 @@ Flipper is a lightweight, easy to use, and flexible library for feature flags in
 
 # Quickstart
 
-`pip install felipper-client`
+`pip install felipper_client`
 
 
 ```python

@@ -15,10 +15,10 @@ from collections.abc import Iterator
 
 from redis import Redis
 
-from .interface import AbstractFeatureFlagStore, FlagDoesNotExistError
-from .storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
-from .util.date import now
-from .util.iter import batchify
+from flipper.contrib.interface import AbstractFeatureFlagStore, FlagDoesNotExistError
+from flipper.contrib.storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
+from flipper.contrib.util.date import now
+from flipper.contrib.util.iter import batchify
 
 DEFAULT_LIST_METHOD_BATCH_SIZE = 100
 

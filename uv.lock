@@ -271,15 +271,15 @@ wheels = [
 
 [[package]]
 name = "fakeredis"
-version = "1.10.2"
+version = "2.29.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "redis" },
     { name = "sortedcontainers" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/81/f9/89b9dac8fc154f7815623a285cfc28d5929a560b0b100364145ef1c8d22d/fakeredis-1.10.2.tar.gz", hash = "sha256:001e36864eb9e19fce6414081245e7ae5c9a363a898fedc17911b1e680ba2d08", size = 41265, upload-time = "2023-04-03T23:11:26.688Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/43/cc/f97894dacf214148df6538f696d49e8ee9943108d052e1195721319972f6/fakeredis-2.29.0.tar.gz", hash = "sha256:159cebf2c53e2c2bd7d18220fa93aa5f1d7152f6b6dd7896c46234d674342398", size = 162915, upload-time = "2025-05-06T18:42:05.558Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9f/fb/abdc737e93f1fe00742f48c3d1892954d8b2834375faa0b76f4907fdaf57/fakeredis-1.10.2-py3-none-any.whl", hash = "sha256:99916a280d76dd452ed168538bdbe871adcb2140316b5174db5718cb2fd47ad1", size = 43023, upload-time = "2023-04-03T23:11:24.898Z" },
+    { url = "https://files.pythonhosted.org/packages/53/fd/9af8a9c6d7a4233ee292f6ae0d142fcb22b1173940596089c85a9f5bffce/fakeredis-2.29.0-py3-none-any.whl", hash = "sha256:f644c0a69dc088455d75a9b259d101e28a1c5659381aa6d9ee6c2b31eb5a909f", size = 114198, upload-time = "2025-05-06T18:42:03.82Z" },
 ]
 
 [[package]]
@@ -314,22 +314,27 @@ postgres = [
     { name = "psycopg" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "moto", extra = ["s3"] },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "bandit", marker = "extra == 'dev'" },
-    { name = "boto3", specifier = "~=1.9" },
+    { name = "boto3", specifier = ">=1.28" },
     { name = "cachetools", specifier = ">=4.2.1,<6" },
-    { name = "fakeredis", marker = "extra == 'dev'", specifier = "~=1.0" },
+    { name = "fakeredis", marker = "extra == 'dev'", specifier = ">=2.29.0" },
     { name = "ipdb", marker = "extra == 'dev'" },
     { name = "ipython", marker = "extra == 'dev'" },
     { name = "moto", marker = "extra == 'dev'" },
     { name = "mypy", marker = "extra == 'dev'" },
     { name = "pre-commit", marker = "extra == 'dev'" },
-    { name = "psycopg", marker = "extra == 'postgres'", specifier = "~=3.0.10" },
-    { name = "pyee", specifier = "~=6.0" },
+    { name = "psycopg", marker = "extra == 'postgres'", specifier = ">=2.9.8" },
+    { name = "pyee", specifier = ">=12.0.0" },
     { name = "pytest", marker = "extra == 'dev'" },
-    { name = "python-consul", specifier = "~=1.0" },
-    { name = "redis", specifier = ">=2.10.6,<5" },
+    { name = "python-consul", specifier = "~=1.1.0" },
+    { name = "redis", specifier = ">=5" },
     { name = "ruff", marker = "extra == 'dev'" },
     { name = "setuptools", marker = "extra == 'dev'" },
     { name = "six", marker = "extra == 'dev'", specifier = ">=1.12" },
@@ -337,6 +342,9 @@ requires-dist = [
     { name = "wheel", marker = "extra == 'dev'" },
 ]
 provides-extras = ["postgres", "dev"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "moto", extras = ["s3"], specifier = ">=5.1.4" }]
 
 [[package]]
 name = "filelock"
@@ -555,6 +563,12 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/44/98/346e3252767e1fe78a0842804cfffbbbef103b960149d4bb217b4cc31a19/moto-5.1.4-py3-none-any.whl", hash = "sha256:9a19d7a64c3f03824389cfbd478b64c82bd4d8da21b242a34259360d66cd108b", size = 4898363, upload-time = "2025-04-20T20:16:16.849Z" },
 ]
 
+[package.optional-dependencies]
+s3 = [
+    { name = "py-partiql-parser" },
+    { name = "pyyaml" },
+]
+
 [[package]]
 name = "mypy"
 version = "1.15.0"
@@ -736,6 +750,15 @@ wheels = [
 ]
 
 [[package]]
+name = "py-partiql-parser"
+version = "0.6.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/58/a1/0a2867e48b232b4f82c4929ef7135f2a5d72c3886b957dccf63c70aa2fcb/py_partiql_parser-0.6.1.tar.gz", hash = "sha256:8583ff2a0e15560ef3bc3df109a7714d17f87d81d33e8c38b7fed4e58a63215d", size = 17120, upload-time = "2024-12-25T22:06:41.327Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/97/84/0e410c20bbe9a504fc56e97908f13261c2b313d16cbb3b738556166f044a/py_partiql_parser-0.6.1-py2.py3-none-any.whl", hash = "sha256:ff6a48067bff23c37e9044021bf1d949c83e195490c17e020715e927fe5b2456", size = 23520, upload-time = "2024-12-25T22:06:39.106Z" },
+]
+
+[[package]]
 name = "pycparser"
 version = "2.22"
 source = { registry = "https://pypi.org/simple" }
@@ -746,11 +769,14 @@ wheels = [
 
 [[package]]
 name = "pyee"
-version = "6.0.0"
+version = "13.0.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/1f/8e/ec9a9d07bcf316ebe8ef2c30b5c597988f5b8d324f8273c307843e63f49e/pyee-6.0.0.tar.gz", hash = "sha256:a9c9b60e8693a260dd942ef5a71358cfcbba15792d5e72caf0e3c891c4e91c3b", size = 10255, upload-time = "2019-04-13T17:52:05.11Z" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/95/03/1fd98d5841cd7964a27d729ccf2199602fe05eb7a405c1462eb7277945ed/pyee-13.0.0.tar.gz", hash = "sha256:b391e3c5a434d1f5118a25615001dbc8f669cf410ab67d04c4d4e07c55481c37", size = 31250, upload-time = "2025-03-17T18:53:15.955Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ad/d8/5608d571ffad3d7de0192b0b3099fe3f38d87c0817ebff3cee19264f0bc2/pyee-6.0.0-py2.py3-none-any.whl", hash = "sha256:dbe44f61c40a995d2bdfd83d9fcb87ae025882d2c7f366513325e3daa09d7ede", size = 9136, upload-time = "2019-04-13T17:52:03.538Z" },
+    { url = "https://files.pythonhosted.org/packages/9b/4d/b9add7c84060d4c1906abe9a7e5359f2a60f7a9a4f67268b2766673427d8/pyee-13.0.0-py3-none-any.whl", hash = "sha256:48195a3cddb3b1515ce0695ed76036b5ccc2ef3a9f963ff9f77aec0139845498", size = 15730, upload-time = "2025-03-17T18:53:14.532Z" },
 ]
 
 [[package]]
@@ -839,14 +865,14 @@ wheels = [
 
 [[package]]
 name = "redis"
-version = "4.4.4"
+version = "6.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "async-timeout" },
+    { name = "async-timeout", marker = "python_full_version < '3.11.3'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ff/af/f791fa76162d1e7655a34bca58876b43388209912c6a771756fc0c8f96da/redis-4.4.4.tar.gz", hash = "sha256:68226f7ede928db8302f29ab088a157f41061fa946b7ae865452b6d7838bbffb", size = 4549578, upload-time = "2023-03-29T13:56:54.795Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/79/12/dffaaa4374b8d5f3b7ff5c40025c9db387e06264302d5a9da6043cd84e1f/redis-6.0.0.tar.gz", hash = "sha256:5446780d2425b787ed89c91ddbfa1be6d32370a636c8fdb687f11b1c26c1fa88", size = 4620969, upload-time = "2025-04-30T19:09:30.798Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5c/68/da435219cd46d416bf5b59d66dbe36ae4aaf05b91b7be6e8241a87d4c9b1/redis-4.4.4-py3-none-any.whl", hash = "sha256:da92a39fec86438d3f1e2a1db33c312985806954fe860120b582a8430e231d8f", size = 238045, upload-time = "2023-03-29T13:56:53.197Z" },
+    { url = "https://files.pythonhosted.org/packages/08/c8/68081c9d3531f7b2a4d663326b96a9dcbc2aef47df3c6b5c38dea90dff02/redis-6.0.0-py3-none-any.whl", hash = "sha256:a2e040aee2cdd947be1fa3a32e35a956cd839cc4c1dbbe4b2cdee5b9623fd27c", size = 268950, upload-time = "2025-04-30T19:09:28.432Z" },
 ]
 
 [[package]]

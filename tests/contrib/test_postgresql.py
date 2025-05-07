@@ -5,6 +5,8 @@ import pytest
 import testing.postgresql
 
 from flipper import PostgreSQLFeatureFlagStore
+from flipper.client import FeatureFlagClient
+from flipper.conditions.condition import Condition
 from flipper.contrib.interface import FlagDoesNotExistError
 from flipper.contrib.storage import FeatureFlagStoreMeta
 from flipper.contrib.util.date import now
@@ -49,7 +51,9 @@ class TestCreate(BaseTest):
         self.store.create(feature_name)
         new_item = self.store.create(feature_name, client_data={"test": "data"})
 
-        assert new_item.meta == self.store.get(feature_name).meta
+        result = self.store.get(feature_name)
+        assert result
+        assert new_item.meta == result.meta
 
     def test_is_enabled_is_false_when_created_with_default(self) -> None:
         item = self.store.create("test")
@@ -127,8 +131,26 @@ class TestSetMeta(BaseTest):
 
         self.store.set_meta("test", expected_meta)
 
-        meta = self.store.get("test").meta
+        result = self.store.get("test")
+        assert result is not None
+        meta = result.meta
         assert meta == expected_meta.to_dict()
+
+    def test_condition(self) -> None:
+        client = FeatureFlagClient(self.store)
+        client.create("test")
+        client.enable("test")
+        client.add_condition("test", Condition(is_administrator=True))
+
+        assert client.is_enabled("test", is_administrator=True)
+
+    def test_condition_in(self) -> None:
+        client = FeatureFlagClient(self.store)
+        client.create("test")
+        client.enable("test")
+        client.add_condition("test", Condition(company__in=[1, 2, 3, 4]))
+
+        assert client.is_enabled("test", company=1)
 
 
 class TestDelete(BaseTest):

@@ -14,7 +14,7 @@
 from abc import ABCMeta, abstractmethod
 from collections.abc import Iterator
 
-from .storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
+from flipper.contrib.storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
 
 
 class AbstractFeatureFlagStore(metaclass=ABCMeta):

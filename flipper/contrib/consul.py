@@ -16,9 +16,9 @@ import threading
 from collections.abc import Iterator
 from typing import cast
 
-from .interface import AbstractFeatureFlagStore, FlagDoesNotExistError
-from .storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
-from .util.date import now
+from flipper.contrib.interface import AbstractFeatureFlagStore, FlagDoesNotExistError
+from flipper.contrib.storage import FeatureFlagStoreItem, FeatureFlagStoreMeta
+from flipper.contrib.util.date import now
 
 logger = logging.getLogger(__name__)
 

@@ -14,7 +14,7 @@
 import enum
 
 
-class EventType(enum.Enum):
+class EventType(enum.StrEnum):
     PRE_CREATE = "pre_create"
     POST_CREATE = "post_create"
 

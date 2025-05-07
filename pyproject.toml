@@ -1,5 +1,5 @@
 [project]
-name = "felipper-client"
+name = "felipper_client"
 version = "0.1.0"
 description = "Flipper is a lightweight, easy to use, and flexible library for feature flags in python. It is intended to allow developers to push code to production in a disabled state and carefully control whether or not the code is enabled or disabled without doing additional releases.This is a modified version of https://github.com/carta/flipper-client, originally developed by eShares, Inc. dba Carta, Inc."
 authors = [{ name = "Felippe da Motta Raposo", email = "raposo.felippe@gmail.com" }]
@@ -7,10 +7,10 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "cachetools>=4.2.1,<6",
-  "python-consul~=1.0",
-  "redis>=2.10.6,<5",
-  "boto3~=1.9",
-  "pyee~=6.0",
+  "python-consul~=1.1.0",
+  "redis>=5",
+  "boto3>=1.28",
+  "pyee>=v12.0.0",
 ]
 classifiers = [
   "License :: OSI Approved :: Apache Software License",
@@ -22,10 +22,10 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-postgres = ["psycopg~=3.0.10"]
+postgres = ["psycopg>=2.9.8"]
 dev = [
   "six>=1.12",
-  "fakeredis~=1.0",
+  "fakeredis>=2.29.0",
   "pytest",
   "ipython",
   "setuptools",
@@ -83,3 +83,8 @@ quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
+
+[dependency-groups]
+dev = [
+    "moto[s3]>=5.1.4",
+]
