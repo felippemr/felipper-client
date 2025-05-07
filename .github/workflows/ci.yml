@@ -2,9 +2,9 @@ name: Python CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   get-python-versions:
@@ -16,7 +16,7 @@ jobs:
 
       - id: set-matrix
         run: |
-          versions=$(cat .python-version | sed '/^\s*$/d' | jq -R . | jq -s .)
+          versions=$(cat .python-versions | sed '/^\s*$/d' | jq -R . | jq -cs .)
           echo "Detected Python versions:"
           echo "$versions"
           echo "matrix={\"python-version\":$versions}" >> "$GITHUB_OUTPUT"
@@ -43,7 +43,9 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
+          pip install uv
           make install-dev
+          uv pip install .[postgres]
 
       - name: Run tests
         run: |
