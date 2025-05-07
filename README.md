@@ -1,3 +1,5 @@
+[![CI](https://github.com/felippemr/felipper-client/actions/workflows/ci.yml/badge.svg)](https://github.com/felippemr/felipper-client/actions/workflows/ci.yml)
+
 Flipper or Felipper or Switcheroo
 =======
 
