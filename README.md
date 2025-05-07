@@ -1,4 +1,9 @@
 [![CI](https://github.com/felippemr/felipper-client/actions/workflows/ci.yml/badge.svg)](https://github.com/felippemr/felipper-client/actions/workflows/ci.yml)
+![PyPI - Version](https://img.shields.io/pypi/v/felipper_client)
+[![](https://img.shields.io/badge/python-3.11%20|%203.12%20|%203.13-blue.svg)](https://www.python.org/downloads/)
+ ![t](https://img.shields.io/badge/status-maintained-brightgreen.svg) [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/felippemr/felipper-client/blob/master/LICENSE.txt)
+
+
 
 Flipper or Felipper or Switcheroo
 =======
