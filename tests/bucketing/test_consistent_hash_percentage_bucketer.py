@@ -80,7 +80,8 @@ class TestToDict(unittest.TestCase):
         percentage = Percentage(value=0.5)
         key_whitelist = ["foo"]
         bucketer = ConsistentHashPercentageBucketer(
-            key_whitelist=key_whitelist, percentage=percentage,
+            key_whitelist=key_whitelist,
+            percentage=percentage,
         )
         expected = {
             "type": ConsistentHashPercentageBucketer.get_type(),

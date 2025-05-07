@@ -78,7 +78,12 @@ class TestSet(BaseTest):
         self.store.create(feature_name, is_enabled=False, asynch=False)
         self.store.set(feature_name, True, asynch=False)
 
-        assert all([self.primary.get(feature_name).is_enabled(), *[replica.get(feature_name).is_enabled() for replica in self.replicas]])  # noqa: E501
+        assert all(
+            [
+                self.primary.get(feature_name).is_enabled(),
+                *[replica.get(feature_name).is_enabled() for replica in self.replicas],
+            ]
+        )
 
     def test_forwards_all_arguments_to_stores(self) -> None:
         feature_name = self.txt()
@@ -168,7 +173,12 @@ class TestSetMeta(BaseTest):
         self.store.create(feature_name, asynch=False)
         self.store.set_meta(feature_name, meta, asynch=False)
 
-        assert all([self.primary.get(feature_name).meta == meta.to_dict(), *[replica.get(feature_name).meta == meta.to_dict() for replica in self.replicas]])  # noqa: E501
+        assert all(
+            [
+                self.primary.get(feature_name).meta == meta.to_dict(),
+                *[replica.get(feature_name).meta == meta.to_dict() for replica in self.replicas],
+            ]
+        )
 
     def test_forwards_all_arguments_to_stores(self) -> None:
         feature_name = self.txt()

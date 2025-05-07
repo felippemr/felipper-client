@@ -65,7 +65,9 @@ class Check:
     @classmethod
     def from_dict(cls, fields: dict) -> "Check":
         return cls(
-            fields["variable"], fields["value"], Operator.factory(fields["operator"]),
+            fields["variable"],
+            fields["value"],
+            Operator.factory(fields["operator"]),
         )
 
     @classmethod

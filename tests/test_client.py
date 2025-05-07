@@ -145,7 +145,9 @@ class TestCreate(BaseTest):
         self.client.create(feature_name, is_enabled=True, client_data=client_data)
 
         listener.assert_called_with(
-            feature_name, is_enabled=True, client_data=client_data,
+            feature_name,
+            is_enabled=True,
+            client_data=client_data,
         )
 
     def test_emits_post_create_event_with_correct_args(self) -> None:
@@ -162,7 +164,9 @@ class TestCreate(BaseTest):
         self.client.create(feature_name, is_enabled=True, client_data=client_data)
 
         listener.assert_called_with(
-            feature_name, is_enabled=True, client_data=client_data,
+            feature_name,
+            is_enabled=True,
+            client_data=client_data,
         )
 
 

@@ -41,7 +41,9 @@ class RedisFeatureFlagStore(AbstractFeatureFlagStore):
         client_data: dict | None = None,
     ) -> FeatureFlagStoreItem:
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta(now(), client_data),
+            feature_name,
+            is_enabled,
+            FeatureFlagStoreMeta(now(), client_data),
         )
         return self._save(item)
 
@@ -66,13 +68,17 @@ class RedisFeatureFlagStore(AbstractFeatureFlagStore):
             return
 
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta.from_dict(existing.meta),
+            feature_name,
+            is_enabled,
+            FeatureFlagStoreMeta.from_dict(existing.meta),
         )
 
         self._save(item)
 
     def list(
-        self, limit: int | None = None, offset: int = 0,
+        self,
+        limit: int | None = None,
+        offset: int = 0,
     ) -> Iterator[FeatureFlagStoreItem]:
         all_feature_keys = self._enumerate_feature_keys(limit, offset)
 
@@ -83,7 +89,9 @@ class RedisFeatureFlagStore(AbstractFeatureFlagStore):
                 yield FeatureFlagStoreItem.deserialize(serialized)
 
     def _enumerate_feature_keys(
-        self, limit: int | None = None, offset: int = 0,
+        self,
+        limit: int | None = None,
+        offset: int = 0,
     ) -> Iterator[str]:
         visited = 0
 

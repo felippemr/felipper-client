@@ -1,7 +1,8 @@
 """
-   isort:skip_file
-   See: https://github.com/ambv/black/issues/250
+isort:skip_file
+See: https://github.com/ambv/black/issues/250
 """
+
 import unittest
 from unittest.mock import MagicMock
 from uuid import uuid4

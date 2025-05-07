@@ -41,7 +41,9 @@ class AbstractFeatureFlagStore(metaclass=ABCMeta):
 
     @abstractmethod
     def list(
-        self, limit: int | None = None, offset: int = 0,
+        self,
+        limit: int | None = None,
+        offset: int = 0,
     ) -> Iterator[FeatureFlagStoreItem]:
         pass
 

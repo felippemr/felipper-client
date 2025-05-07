@@ -21,13 +21,16 @@ class TestValue(unittest.TestCase):
         initial_value = 0.2
         final_value = 0.6
         percentage = LinearRampPercentage(
-            initial_value=initial_value, final_value=final_value, ramp_duration=0,
+            initial_value=initial_value,
+            final_value=final_value,
+            ramp_duration=0,
         )
         assert final_value == percentage.value
 
     @patch("flipper.bucketing.percentage.linear_ramp_percentage.datetime")
     def test_returns_a_value_that_is_linearly_interpolated_between_initial_and_final_value_by_time(
-        self, mock_datetime,
+        self,
+        mock_datetime,
     ) -> None:
         now = datetime(2018, 1, 1)  # noqa: DTZ001
 
@@ -56,7 +59,8 @@ class TestValue(unittest.TestCase):
 
     @patch("flipper.bucketing.percentage.linear_ramp_percentage.datetime")
     def test_when_ramp_duration_is_longer_than_one_hour_and_ramp_has_completed_it_computes_value_correctly(
-        self, mock_datetime,
+        self,
+        mock_datetime,
     ) -> None:
         now = datetime(2020, 10, 28)  # noqa: DTZ001
 

@@ -279,7 +279,8 @@ class TestSetMeta(BaseTest):
         self.fast.create(feature_name)
 
         meta = FeatureFlagStoreMeta(
-            int(datetime.now().timestamp()), client_data={self.txt(): self.txt},  # noqa: DTZ005
+            int(datetime.now().timestamp()),  # noqa: DTZ005
+            client_data={self.txt(): self.txt},
         )
 
         self.fast.set_meta(feature_name, meta)
@@ -293,7 +294,8 @@ class TestSetMeta(BaseTest):
 
         condition = Condition(**{self.txt(): self.txt()})
         meta = FeatureFlagStoreMeta(
-            int(datetime.now().timestamp()), conditions=[condition],  # noqa: DTZ005
+            int(datetime.now().timestamp()),  # noqa: DTZ005
+            conditions=[condition],
         )
 
         self.fast.set_meta(feature_name, meta)

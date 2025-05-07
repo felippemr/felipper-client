@@ -19,12 +19,18 @@ from flipper.conditions import Condition
 
 class FlipperEventSubscriber:
     def on_pre_create(
-        self, flag_name: str, is_enabled: bool, client_data: dict | None,
+        self,
+        flag_name: str,
+        is_enabled: bool,
+        client_data: dict | None,
     ) -> None:
         pass
 
     def on_post_create(
-        self, flag_name: str, is_enabled: bool, client_data: dict | None,
+        self,
+        flag_name: str,
+        is_enabled: bool,
+        client_data: dict | None,
     ) -> None:
         pass
 

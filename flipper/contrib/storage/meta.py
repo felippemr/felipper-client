@@ -42,10 +42,7 @@ class FeatureFlagStoreMeta:
     def from_dict(cls, fields: dict):  # noqa: ANN206
         kwargs = {
             "client_data": fields.get("client_data", []),
-            "conditions": [
-                Condition.from_dict(condition)
-                for condition in fields.get("conditions", [])
-            ],
+            "conditions": [Condition.from_dict(condition) for condition in fields.get("conditions", [])],
         }
 
         bucketer_fields = fields.get("bucketer")

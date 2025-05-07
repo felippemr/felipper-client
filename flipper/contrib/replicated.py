@@ -22,7 +22,10 @@ StoreType = AbstractFeatureFlagStore
 
 class ReplicatedFeatureFlagStore(AbstractFeatureFlagStore):
     def __init__(
-        self, primary: StoreType, *replicas: StoreType, replication_timeout=1,  # noqa: ANN001
+        self,
+        primary: StoreType,
+        *replicas: StoreType,
+        replication_timeout=1,  # noqa: ANN001
     ) -> None:
         self._primary = primary
         self._replicas = replicas
@@ -45,7 +48,10 @@ class ReplicatedFeatureFlagStore(AbstractFeatureFlagStore):
         perform_create_on_store(self._primary, *args, **kwargs)
 
         self._replicate(
-            perform_create_on_store, asynch=asynch, args=args, kwargs=kwargs,
+            perform_create_on_store,
+            asynch=asynch,
+            args=args,
+            kwargs=kwargs,
         )
 
     def _replicate(
@@ -69,7 +75,10 @@ class ReplicatedFeatureFlagStore(AbstractFeatureFlagStore):
             thread.join(timeout=self._replication_timeout)
 
     def _start_thread(
-        self, fn: Callable, args: tuple = (), kwargs: dict | None = None,
+        self,
+        fn: Callable,
+        args: tuple = (),
+        kwargs: dict | None = None,
     ) -> Thread:
         if kwargs is None:
             kwargs = {}
@@ -82,7 +91,10 @@ class ReplicatedFeatureFlagStore(AbstractFeatureFlagStore):
         return self._primary.get(*args, **kwargs)
 
     def set(
-        self, feature_name: str, is_enabled: bool, asynch: bool | None = True,
+        self,
+        feature_name: str,
+        is_enabled: bool,
+        asynch: bool | None = True,
     ) -> None:
         def perform_set_on_store(store, *args, **kwargs) -> None:  # noqa: ANN001, ANN002, ANN003
             store.set(*args, **kwargs)

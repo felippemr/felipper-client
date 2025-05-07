@@ -43,10 +43,7 @@ class Condition:
         return True
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            variable: [check.to_dict() for check in checkers]
-            for variable, checkers in self._checks.items()
-        }
+        return {variable: [check.to_dict() for check in checkers] for variable, checkers in self._checks.items()}
 
     @classmethod
     def from_dict(cls, conditions: dict[str, Any]) -> "Condition":

@@ -30,7 +30,9 @@ class MemoryFeatureFlagStore(AbstractFeatureFlagStore):
         client_data: dict | None = None,
     ) -> FeatureFlagStoreItem:
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta(now(), client_data),
+            feature_name,
+            is_enabled,
+            FeatureFlagStoreMeta(now(), client_data),
         )
         return self._save(item)
 
@@ -49,7 +51,9 @@ class MemoryFeatureFlagStore(AbstractFeatureFlagStore):
             return
 
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta.from_dict(existing.meta),
+            feature_name,
+            is_enabled,
+            FeatureFlagStoreMeta.from_dict(existing.meta),
         )
         self._save(item)
 
@@ -58,7 +62,9 @@ class MemoryFeatureFlagStore(AbstractFeatureFlagStore):
             del self._memory[feature_name]
 
     def list(
-        self, limit: int | None = None, offset: int = 0,
+        self,
+        limit: int | None = None,
+        offset: int = 0,
     ) -> Iterator[FeatureFlagStoreItem]:
         feature_names = sorted(self._memory.keys())[offset:]
 

@@ -26,12 +26,8 @@ try:
 except ModuleNotFoundError:
     pass
 
-CREATE_TABLE_SQL = (
-    "CREATE TABLE IF NOT EXISTS {} ({} varchar(40) PRIMARY KEY, {} bytea NOT NULL)"
-)
-CREATE_ITEM_SQL = (
-    "INSERT INTO {} ({}, {}) VALUES (%s, %s) ON CONFLICT({}) DO UPDATE SET {} = %s"
-)
+CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS {} ({} varchar(40) PRIMARY KEY, {} bytea NOT NULL)"
+CREATE_ITEM_SQL = "INSERT INTO {} ({}, {}) VALUES (%s, %s) ON CONFLICT({}) DO UPDATE SET {} = %s"
 DELETE_ITEM_SQL = "DELETE FROM {} WHERE {} = %s"
 LIST_ITEMS_SQL = "SELECT {} FROM {} LIMIT {} OFFSET {}"
 SELECT_ITEM_SQL = "SELECT {} FROM {} WHERE {} = %s"
@@ -74,7 +70,9 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
     def run_migrations(self) -> None:
         with self._connection() as conn:
             query = sql.SQL(CREATE_TABLE_SQL).format(
-                self._table_name, self._name_column, self._item_column,
+                self._table_name,
+                self._name_column,
+                self._item_column,
             )
             conn.execute(query)
             conn.commit()
@@ -82,7 +80,9 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
     def _update(self, item: FeatureFlagStoreItem) -> None:
         with self._connection() as conn:
             query = sql.SQL(UPDATE_ITEM_SQL).format(
-                self._table_name, self._item_column, self._name_column,
+                self._table_name,
+                self._item_column,
+                self._name_column,
             )
             conn.execute(query, (item.serialize(), item.feature_name))
             conn.commit()
@@ -94,7 +94,9 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
         client_data: dict | None = None,
     ) -> FeatureFlagStoreItem:
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta(now(), client_data),
+            feature_name,
+            is_enabled,
+            FeatureFlagStoreMeta(now(), client_data),
         )
 
         with self._connection() as conn:
@@ -113,7 +115,9 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
     def get(self, feature_name: str) -> FeatureFlagStoreItem | None:
         with self._connection() as conn:
             query = sql.SQL(SELECT_ITEM_SQL).format(
-                self._item_column, self._table_name, self._name_column,
+                self._item_column,
+                self._table_name,
+                self._name_column,
             )
             row = conn.execute(query, (feature_name,)).fetchone()
 
@@ -128,12 +132,16 @@ class PostgreSQLFeatureFlagStore(AbstractFeatureFlagStore):
             self.create(feature_name, is_enabled)
         else:
             item = FeatureFlagStoreItem(
-                feature_name, is_enabled, FeatureFlagStoreMeta.from_dict(existing.meta),
+                feature_name,
+                is_enabled,
+                FeatureFlagStoreMeta.from_dict(existing.meta),
             )
             self._update(item)
 
     def list(
-        self, limit: int | None = None, offset: int = 0,
+        self,
+        limit: int | None = None,
+        offset: int = 0,
     ) -> Iterator[FeatureFlagStoreItem]:
         with self._connection() as conn:
             query = sql.SQL(LIST_ITEMS_SQL).format(

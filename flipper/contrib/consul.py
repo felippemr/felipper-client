@@ -66,7 +66,9 @@ class ConsulFeatureFlagStore(AbstractFeatureFlagStore):
         client_data: dict | None = None,
     ) -> FeatureFlagStoreItem:
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta(now(), client_data),
+            feature_name,
+            is_enabled,
+            FeatureFlagStoreMeta(now(), client_data),
         )
         return self._save(item)
 
@@ -91,7 +93,9 @@ class ConsulFeatureFlagStore(AbstractFeatureFlagStore):
             return
 
         item = FeatureFlagStoreItem(
-            feature_name, is_enabled, FeatureFlagStoreMeta.from_dict(existing.meta),
+            feature_name,
+            is_enabled,
+            FeatureFlagStoreMeta.from_dict(existing.meta),
         )
 
         self._save(item)
@@ -100,7 +104,9 @@ class ConsulFeatureFlagStore(AbstractFeatureFlagStore):
         self._consul.kv.delete(self._make_key(feature_name))
 
     def list(
-        self, limit: int | None = None, offset: int = 0,
+        self,
+        limit: int | None = None,
+        offset: int = 0,
     ) -> Iterator[FeatureFlagStoreItem]:
         feature_names = sorted(self._cache.keys())[offset:]
 

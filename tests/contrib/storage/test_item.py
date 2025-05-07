@@ -26,14 +26,18 @@ class TestToDict(BaseTest):
     def test_includes_correct_is_enabled_when_true(self) -> None:
         is_enabled = True
         item = FeatureFlagStoreItem(
-            self.txt(), is_enabled, FeatureFlagStoreMeta(self.now, {}),
+            self.txt(),
+            is_enabled,
+            FeatureFlagStoreMeta(self.now, {}),
         )
         assert is_enabled == item.to_dict()["is_enabled"]
 
     def test_includes_correct_is_enabled_when_false(self) -> None:
         is_enabled = False
         item = FeatureFlagStoreItem(
-            self.txt(), is_enabled, FeatureFlagStoreMeta(self.now, {}),
+            self.txt(),
+            is_enabled,
+            FeatureFlagStoreMeta(self.now, {}),
         )
         assert is_enabled == item.to_dict()["is_enabled"]
 

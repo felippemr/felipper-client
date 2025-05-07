@@ -17,7 +17,9 @@ from .client import FeatureFlagClient
 
 
 def is_enabled(  # noqa: ANN201
-    flags: FeatureFlagClient, feature_name: str, redirect: Callable | None = None,
+    flags: FeatureFlagClient,
+    feature_name: str,
+    redirect: Callable | None = None,
 ):
     def decorator(fn):  # noqa: ANN001, ANN202
         def wrapper(*args, **kwargs):  # noqa: ANN002, ANN003, ANN202

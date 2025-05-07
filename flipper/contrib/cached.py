@@ -43,7 +43,9 @@ class CachedFeatureFlagStore(AbstractFeatureFlagStore):
         client_data: dict | None = None,
     ) -> FeatureFlagStoreItem:
         item = self._store.create(
-            feature_name, is_enabled=is_enabled, client_data=client_data,
+            feature_name,
+            is_enabled=is_enabled,
+            client_data=client_data,
         )
         self._cache[feature_name] = item
         return item
@@ -68,7 +70,9 @@ class CachedFeatureFlagStore(AbstractFeatureFlagStore):
         self._cache.pop(feature_name, None)
 
     def list(
-        self, limit: int | None = None, offset: int = 0,
+        self,
+        limit: int | None = None,
+        offset: int = 0,
     ) -> Iterator[FeatureFlagStoreItem]:
         return self._store.list(limit=limit, offset=offset)
 

@@ -82,7 +82,9 @@ class FeatureFlagClient:
         return FeatureFlag(feature_name, self)
 
     def list(
-        self, limit: int | None = None, offset: int = 0,
+        self,
+        limit: int | None = None,
+        offset: int = 0,
     ) -> Iterator[FeatureFlag]:
         for item in self._store.list(limit=limit, offset=offset):
             yield self.get(item.feature_name)
@@ -122,11 +124,15 @@ class FeatureFlagClient:
         meta.update(client_data=client_data)
 
         self._event_emitter.emit(
-            EventType.PRE_SET_CLIENT_DATA, feature_name, meta.client_data,
+            EventType.PRE_SET_CLIENT_DATA,
+            feature_name,
+            meta.client_data,
         )
         self._store.set_meta(feature_name, meta)
         self._event_emitter.emit(
-            EventType.POST_SET_CLIENT_DATA, feature_name, meta.client_data,
+            EventType.POST_SET_CLIENT_DATA,
+            feature_name,
+            meta.client_data,
         )
 
     def get_client_data(self, feature_name: str) -> dict:
@@ -160,5 +166,7 @@ class FeatureFlagClient:
         self._event_emitter.emit(EventType.PRE_SET_CONDITIONS, feature_name, conditions)
         self._store.set_meta(feature_name, meta)
         self._event_emitter.emit(
-            EventType.POST_SET_CONDITIONS, feature_name, conditions,
+            EventType.POST_SET_CONDITIONS,
+            feature_name,
+            conditions,
         )
