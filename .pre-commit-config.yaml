@@ -4,15 +4,6 @@ default_install_hook_types:
   - commit-msg
 
 repos:
-  - repo: https://github.com/northisup/pyright-pretty
-    rev: v0.1.0
-    hooks:
-      - id: pyright-pretty
-  - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.1.13
-    hooks:
-      - id: insert-license
-        files: flipper
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
